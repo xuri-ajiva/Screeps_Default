@@ -5,16 +5,38 @@ const CARRYER = 'carry';
 
 var spawnner = {
     Check: function (game) {
-        function spawn(obj, ls) {
+        let spawn = function (obj, ls, adj) {
             var newName = obj + Game.time;
-            console.log('Spawning new ' + obj + 'er: ' + newName + "  => " + Memory.Spw.spawnCreep(ls, newName, {memory: {action: obj}}));
+            if (adj) {
+                console.log('Spawning new ' + obj + 'er: ' + newName + "  => " + Memory.Spw.spawnCreep(ls, newName, {
+                    memory: {action: obj},
+                    adj
+                }));
+            } else {
+                console.log('Spawning new ' + obj + 'er: ' + newName + "  => " + Memory.Spw.spawnCreep(ls, newName, {memory: {action: obj}}));
+            }
+            return newName;
+        };
+
+        function SpawnMiner() {
+            let name = spawn(MINER, [WORK, MOVE, WORK], undefined);
+            if (Memory.need_energy == undefined) {
+                Memory.need_energy = [name];
+            } else {
+                Memory.need_energy.push(name);
+            }
         }
 
+        function SpawnCarry() {
+            let name = spawn(CARRYER, [MOVE, MOVE, CARRY, CARRY], {my_proiryty: Memory.need_energy.shift()});
+        }
 
-        for (let name in Memory.creeps) {
-            if (!Game.creeps[name]) {
-                delete Memory.creeps[name];
-                console.log('Clearing non-existing creep memory:', name);
+        if (Memory.creeps.length !== Game.creeps.length) {
+            for (let name in Memory.creeps) {
+                if (!Game.creeps[name]) {
+                    delete Memory.creeps[name];
+                    console.log('Clearing non-existing creep memory:', name);
+                }
             }
         }
 
@@ -35,18 +57,18 @@ var spawnner = {
                 /*var newName = MINER + Game.time;
                 console.log('Spawning new ' + MINER + ': ' + newName);
                 Memory.Spw.spawnCreep([WORK, MOVE, WORK], newName, {memory: {action: MINER}});*/
-                spawn(MINER, [WORK, MOVE, WORK])
+                SpawnMiner();
             } else if (carryers.length < 1) {
                 /*var newName = CARRYER + Game.time;
                 console.log('Spawning new ' + CARRYER + 'er: ' + newName);
                 Memory.Spw.spawnCreep([MOVE, MOVE, CARRY, CARRY], newName, {memory: {action: CARRYER}});*/
-                spawn(CARRYER, [MOVE, MOVE, CARRY, CARRY])
+                SpawnCarry();
             } else if (miners.length < 2) {
-                spawn(MINER, [WORK, MOVE, WORK])
+                SpawnMiner();
             } else if (carryers.length < 5) {
-                spawn(CARRYER, [MOVE, MOVE, CARRY, CARRY])
+                SpawnCarry();
             } else if (upgraderes.length < 4) {
-                spawn(UPGRADE,[MOVE, CARRY, WORK])
+                spawn(UPGRADE, [MOVE, CARRY, WORK]);
                 /*var newName = UPGRADE + Game.time;
                 console.log('Spawning new ' + UPGRADE + ': ' + newName);
                 Memory.Spw.spawnCreep([MOVE, CARRY, WORK], newName, {memory: {action: UPGRADE}});*/

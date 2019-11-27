@@ -19,6 +19,7 @@ module.exports.loop = function () {
 
     ///Main Select
 
+
     for (var c_name in Game.creeps) {
         var creep = Game.creeps[c_name];
         //creep.suicide();
@@ -27,6 +28,7 @@ module.exports.loop = function () {
             miner.run(creep);
         }
         if (creep.memory.action == UPGRADE) {
+            //creep.suicide();
             upgrade.run(creep);
         }
         if (creep.memory.action == BUILDER) {
