@@ -18,9 +18,10 @@ let carry = {
                 }
             }
 
+            
             if (creep.store[RESOURCE_ENERGY] > 0) {
-                if (creep.memory.my_proiryty != undefined) {
-                    let _owner = Game.creeps[creep.my_proiryty];
+                if (creep.memory.my_proiryty !== undefined) {
+                    let _owner = Game.creeps[creep.memory.my_proiryty];
                     if (_owner != undefined) {
                         if (_owner.store[RESOURCE_ENERGY] < _owner.store.getCapacity() / 2) {
                             if (creep.transfer(_owner, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
@@ -31,7 +32,7 @@ let carry = {
                         delete creep.memory.my_proiryty;
                     }
                     return;
-                } else if (Memory.need_energy.length > 0) {
+                } else if (Memory.need_energy !== undefined && Memory.need_energy.length > 0) {
                     creep.memory.my_proiryty = Memory.need_energy.shift();
                 } else {
                     TransfereToSpawn();

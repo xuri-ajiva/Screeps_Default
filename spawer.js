@@ -20,7 +20,11 @@ var spawnner = {
 
         function SpawnMiner() {
             let name = spawn(MINER, [WORK, MOVE, WORK], undefined);
-            if (Memory.need_energy == undefined) {
+        }
+
+        function SpawnUpgrader() {
+            spawn(UPGRADE, [MOVE, CARRY, WORK]);
+            if (Memory.need_energy === undefined) {
                 Memory.need_energy = [name];
             } else {
                 Memory.need_energy.push(name);
@@ -28,15 +32,10 @@ var spawnner = {
         }
 
         function SpawnCarry() {
-            let name = spawn(CARRYER, [MOVE, MOVE, CARRY, CARRY], {my_proiryty: Memory.need_energy.shift()});
-        }
-
-        if (Memory.creeps.length !== Game.creeps.length) {
-            for (let name in Memory.creeps) {
-                if (!Game.creeps[name]) {
-                    delete Memory.creeps[name];
-                    console.log('Clearing non-existing creep memory:', name);
-                }
+            if (Memory.need_energy !== undefined) {
+                let name = spawn(CARRYER, [MOVE, MOVE, CARRY, CARRY], {my_proiryty: Memory.need_energy.shift()});
+            }else{
+                let name = spawn(CARRYER, [MOVE, MOVE, CARRY, CARRY]);
             }
         }
 
@@ -49,6 +48,7 @@ var spawnner = {
         Memory.ftee_carry = carryers.filter(function (s) {
             return s.memory._owner == undefined
         });
+
         //console.log("unTaken: " + Memory.ftee_carry.length);
         //Spawner
         if (Memory.Spw.store[RESOURCE_ENERGY] > 250 && !Memory.Spw.spawning) {
@@ -68,15 +68,22 @@ var spawnner = {
             } else if (carryers.length < 5) {
                 SpawnCarry();
             } else if (upgraderes.length < 4) {
-                spawn(UPGRADE, [MOVE, CARRY, WORK]);
+                SpawnUpgrader();
                 /*var newName = UPGRADE + Game.time;
                 console.log('Spawning new ' + UPGRADE + ': ' + newName);
                 Memory.Spw.spawnCreep([MOVE, CARRY, WORK], newName, {memory: {action: UPGRADE}});*/
             }
         }
 
+        if (Memory.creeps.length !== Game.creeps.length) {
+            for (let name in Memory.creeps) {
+                if (!Game.creeps[name]) {
+                    delete Memory.creeps[name];
+                    console.log('Clearing non-existing creep memory:', name);
+                }
+            }
+        }
     }
-
 };
 
 module.exports = spawnner;

@@ -19,7 +19,6 @@ module.exports.loop = function () {
 
     ///Main Select
 
-
     for (var c_name in Game.creeps) {
         var creep = Game.creeps[c_name];
         //creep.suicide();
