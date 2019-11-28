@@ -1,34 +1,60 @@
 let carry = {
         run: function (creep) {
             if (creep.lifetime < 10) {
-                Memory.need_energy.push(my_proiryty);
+                Memory.need_energy.push(creep.memory.my_proiryty);
                 creep.subscribe();
                 return;
             }
 
-            function TransfereToSpawn() {
+            /**
+             * @return {boolean}
+             */
+            let TransfereToSpawn = function () {
                 //console.log("TransfereSpw: "+Memory.Spw.store[RESOURCE_ENERGY]);
                 if (Memory.Spw.store[RESOURCE_ENERGY] < 250) {
-                    if (creep.transfer(Memory.Spw, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(Memory.Spw, {visualizePathStyle: {stroke: '#0093ff'}});
-                        creep.say('↩');
+                    if (creep.transfer(Memory.Spw, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+                        creep.moveTo(Memory.Spw/*, {visualizePathStyle: {stroke: '#0093ff'}}*/);
+                        //creep.say('↩');
                     } else {
-                        creep.say('⚡');
+                        //creep.say('⚡');
                     }
+                    return true;
+                }else{
+                    var targets = creep.room.find(FIND_STRUCTURES, {
+                        filter: (structure) => {
+                            return (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN) &&
+                                structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+                        }
+                    });
+                    if(targets.length > 0) {
+                        if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                            creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
+                        }
+                    }else{
+                        return false;
+                    }
+                    return  true;
                 }
-            }
 
-            
+                return false;
+            };
+
             if (creep.store[RESOURCE_ENERGY] > 0) {
+                if (TransfereToSpawn()) {
+                    return;
+                }
                 if (creep.memory.my_proiryty !== undefined) {
                     let _owner = Game.creeps[creep.memory.my_proiryty];
                     if (_owner != undefined) {
-                        if (_owner.store[RESOURCE_ENERGY] < _owner.store.getCapacity() / 2) {
-                            if (creep.transfer(_owner, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                                creep.moveTo(_owner, {visualizePathStyle: {stroke: '#02ff00'}});
+                        if (_owner.store[RESOURCE_ENERGY] < _owner.store.getCapacity() / 1.5) {
+                            if (creep.transfer(_owner, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+                                creep.moveTo(_owner/*, {visualizePathStyle: {stroke: '#02ff00'}}*/);
                             }
+                        } else {
+                            creep.say('💚');
                         }
-                    } else if(Memory.Spw.spawning){
+                    } else if (!Memory.Spw.spawning) {
+                        console.log("removing: " + creep.memory.my_proiryty);
                         delete creep.memory.my_proiryty;
                     }
                     return;
@@ -40,16 +66,16 @@ let carry = {
                 }
             }
             if (creep.store.getFreeCapacity() > 0) {
-                var dropps = creep.room.find(FIND_DROPPED_RESOURCES);
-                if (dropps.length == 0) {
-                    creep.say('✔');
-                } else {
-                    if (creep.pickup(dropps[0]) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(dropps[0], {visualizePathStyle: {stroke: '#00ffd2'}});
-                        creep.say('⏩');
+                var dropp = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
+                if (dropp) {
+                    if (creep.pickup(dropp) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(dropp/*, {visualizePathStyle: {stroke: '#00ffd2'}}*/);
+                        //creep.say('⏩');
                     } else {
                         creep.say('🔼');
                     }
+                } else {
+                    //creep.say('✔');
                 }
             }
         }

@@ -2,11 +2,13 @@ const MINER = 'miner';
 const BUILDER = 'builder';
 const UPGRADE = 'upgrade';
 const CARRYER = 'carry';
+const ARCHITECT = 'architect';
 
 let miner = require('action.' + MINER);
 let upgrade = require('action.' + UPGRADE);
 let builder = require('action.' + BUILDER);
 let carry = require('action.' + CARRYER);
+let architect = require('action.' + ARCHITECT);
 
 let summoner = require('spawer');
 
@@ -19,22 +21,33 @@ module.exports.loop = function () {
 
     ///Main Select
 
+    ///Memory.Spw.spawnCreep([MOVE], '_test', {memory: {action: 'architect'}})
+
     for (var c_name in Game.creeps) {
         var creep = Game.creeps[c_name];
         //creep.suicide();
 
-        if (creep.memory.action == MINER) {
-            miner.run(creep);
-        }
-        if (creep.memory.action == UPGRADE) {
-            //creep.suicide();
-            upgrade.run(creep);
-        }
-        if (creep.memory.action == BUILDER) {
-            builder.run(creep);
-        }
-        if (creep.memory.action == CARRYER) {
-            carry.run(creep);
+        if (creep) {
+            if (creep.memory.action == MINER) {
+                //creep.suicide();
+                miner.run(creep);
+            }
+            if (creep.memory.action == UPGRADE) {
+                //creep.suicide();
+                upgrade.run(creep);
+            }
+            if (creep.memory.action == BUILDER) {
+                //creep.suicide();
+                builder.run(creep);
+            }
+            if (creep.memory.action == CARRYER) {
+                //creep.suicide();
+                carry.run(creep);
+            }
+            if (creep.memory.action == ARCHITECT) {
+                //creep.suicide();
+                architect.run(creep);
+            }
         }
     }
 
