@@ -4,7 +4,7 @@ let upgrade = {
         if (construct !== undefined) {
             let ret =creep.build(construct);
             if (ret === ERR_NOT_IN_RANGE) {
-                creep.moveTo(construct.pos);
+                creep.moveTo(construct);
             }
         } else{
             console.log("Resycle");

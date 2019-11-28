@@ -3,9 +3,9 @@ const BUILDER = 'builder';
 const UPGRADE = 'upgrade';
 const CARRYER = 'carry';
 const ARCHITECT = 'architect';
-const CARRYERS = 10;
+const CARRYERS = 14;
 const MINERS = 7;
-const BUILDERS = 3;
+const BUILDERS = 6;
 
 
 var spawnner = {
@@ -62,7 +62,7 @@ var spawnner = {
         }
 
         function SpawnArchitect() {
-            let name = spawn(ARCHITECT, [MOVE]);
+            let name = spawn(ARCHITECT, [MOVE, MOVE, WORK]);
         }
 
 
