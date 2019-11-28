@@ -7,6 +7,7 @@ let upgrade = {
             }
             //creep.say('🔝')
         }else{
+            creep.moveTo(creep.room.controller, {visualizePathStyle: {stroke: '#ceff01'}});
             //creep.say('💤');
         }
     }

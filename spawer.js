@@ -3,9 +3,9 @@ const BUILDER = 'builder';
 const UPGRADE = 'upgrade';
 const CARRYER = 'carry';
 const ARCHITECT = 'architect';
-const CARRYERS = 14;
-const MINERS = 7;
-const BUILDERS = 6;
+const CARRYERS = 18;
+const MINERS = 9;
+const BUILDERS = 4;
 
 
 var spawnner = {
@@ -90,7 +90,7 @@ var spawnner = {
                 SpawnMiner();
                 return;
             }
-            if (upgraderes.length < carryers.length - BUILDERS) {
+            if (upgraderes.length < (carryers.length-6) - BUILDERS) {
                 SpawnUpgrader();
                 return;
             }
