@@ -3,54 +3,97 @@ const BUILDER = 'builder';
 const UPGRADE = 'upgrade';
 const CARRYER = 'carry';
 const ARCHITECT = 'architect';
-const CARRYERS = 12;
+const REPAIR = 'repair';
+const CARRYERS = 16;
 const MINERS = 9;
 const BUILDERS = 4;
 const UPGRADERS = 4;
+const REPAIRS = 4;
 
 
 var spawnner = {
-    Check: function (game,Spw) {
+    Check: function (game, spw, sw) {
+
+        if (sw) {
+            SpawnArchitect();
+            switch (Memory.init) {
+                case -1:
+                    break;
+                case 0:
+                    if (Memory.need_energy === undefined)
+                        Memory.need_energy = [];
+                    console.log('INIT: ' + Memory.init);
+                    break;
+                case 1:
+                    console.log('INIT: ' + Memory.init);
+                    break;
+                case 2:
+                    console.log('INIT: ' + Memory.init);
+                    break;
+                case 3:
+                    console.log('INIT: ' + Memory.init);
+                    break;
+                case 4:
+                    console.log('INIT: ' + Memory.init);
+                    break;
+                case 5:
+                    console.log('INIT: ' + Memory.init);
+                    break;
+                case 6:
+                    console.log('INIT: ' + Memory.init);
+                    break;
+                case 7:
+                    console.log('INIT: ' + Memory.init);
+                    break;
+                default:
+                    Memory.init = 0;
+            }
+        }
+
         let spawn = function (obj, ls, adj) {
             var newName = obj + Game.time;
             if (adj) {
                 let memory = Object.assign({}, {action: obj}, adj);
-                console.log('Spawning new ' + obj + 'er: ' + newName + "  => " + Spw.spawnCreep(ls, newName, {
+                console.log('*: '+newName+' =>' + spw.spawnCreep(ls, newName, {
                     memory
                 }));
             } else {
-                console.log('Spawning new ' + obj + 'er: ' + newName + "  => " + Spw.spawnCreep(ls, newName, {memory: {action: obj}}));
+                console.log('*: '+newName+' =>' + spw.spawnCreep(ls, newName, {memory: {action: obj}}));
             }
             return newName;
         };
 
-        function SpawnMiner() {
+        function SpawnMiner(energy) {
+            if (energy < 250) return;
             let name = spawn(MINER, [WORK, MOVE, WORK], {
-                source: Spw.room.find(FIND_SOURCES)[parseInt(Math.random() * 1)].id,
+                source: spw.room.find(FIND_SOURCES)[parseInt(Math.random() * 1)].id,
                 count: 0
             });
         }
 
-        function SpawnBuilder() {
-            let name = spawn(BUILDER, [MOVE, CARRY, WORK, WORK]);
-            if (Memory.need_energy === undefined) {
-                console.log("create: " + name);
-                Memory.need_energy = [name];
-            } else {
-                console.log("Pushed: " + name);
-                Memory.need_energy.push(name);
-            }
+        function SpawnRepair(energy) {
+            if (energy < 400) return;
+            let name = spawn(REPAIR, [MOVE, CARRY, CARRY, CARRY, WORK, WORK],);
+
+            console.log("🔜: " + name);
+            Memory.need_energy.push(name);
+
         }
 
-        function SpawnUpgrader() {
+        function SpawnBuilder(energy) {
+            let name = spawn(BUILDER, [MOVE, CARRY, WORK, WORK]);
+
+            console.log("🔜: " + name);
+            Memory.need_energy.push(name);
+
+        }
+
+        function SpawnUpgrader(energy) {
             let name = spawn(UPGRADE, [MOVE, CARRY, WORK]);
-            if (Memory.need_energy === undefined) {
-                console.log("create: " + name);
-                Memory.need_energy = [name];
-            } else {
-                console.log("Pushed: " + name);
-                Memory.need_energy.push(name);
-            }
+
+            console.log("🔜: " + name);
+            Memory.need_energy.push(name);
+
         }
 
         function SpawnCarry(length, available) {
@@ -68,36 +111,30 @@ var spawnner = {
                 parts.push(CARRY);
                 parts.push(CARRY);
             }
-            if (Memory.need_energy !== undefined) {
+            if (Memory.need_energy === undefined)
+                Memory.need_energy = [];
+            if (Memory.need_energy.length > 0) {
                 let name = spawn(CARRYER, parts, {pet: Memory.need_energy.shift()});
             } else {
                 let name = spawn(CARRYER, parts);
             }
         }
 
-        function SpawnArchitect() {
+        function SpawnArchitect(energy) {
             let name = spawn(ARCHITECT, [MOVE, MOVE, WORK]);
         }
 
-
-        //console.log(MINER + "s: " + miners.length + "          " + CARRYER + "ers: " + carryers.length);
-
         let carryers = _.filter(Game.creeps, (creep) => creep.memory.action === CARRYER && creep.memory.pet != null);
-        Memory.ftee_carry = _.map(carryers, function (s) {
+        Memory.pets = _.map(carryers, function (s) {
             return s.memory.pet.substr(7);
         });
 
 
-        // console.log("unTaken: " + Memory.ftee_carry.length);
         // Spawner
-        if (Memory.init === undefined || Memory.init === false) {
-            SpawnArchitect();
-            Memory.init = true;
-        }
 
-        if (!Spw.spawning) {
+        if (!spw.spawning) {
             let energy = 0;
-            _.forEach(Spw.room.find(FIND_STRUCTURES, {
+            _.forEach(spw.room.find(FIND_STRUCTURES, {
                 filter: (structure) => {
                     if (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN)
                         return structure.store[RESOURCE_ENERGY];
@@ -105,35 +142,46 @@ var spawnner = {
             }), (s) => energy += s.store[RESOURCE_ENERGY]);
             //console.log(energy);
             //if (energy < 250) return;
-
             let miners = _.filter(Game.creeps, (creep) => creep.memory.action == MINER);
             let carryers = _.filter(Game.creeps, (creep) => creep.memory.action == CARRYER);
 
             if (miners.length < MINERS && miners.length < carryers.length) {
-                SpawnMiner();
+                SpawnMiner(energy);
                 return;
             }
+            if (energy < 200) return;
             let upgraderes = _.filter(Game.creeps, (creep) => creep.memory.action == UPGRADE);
             if (upgraderes.length < UPGRADERS && upgraderes.length < carryers.length) {
-                SpawnUpgrader();
+                SpawnUpgrader(energy);
                 return;
             }
             if (carryers.length < CARRYERS) {
                 SpawnCarry(carryers.length, energy);
                 return;
             }
-            if (energy >= 300) {
-                let builders = _.filter(Game.creeps, (creep) => creep.memory.action == BUILDER);
-                if (Spw.room.find(FIND_CONSTRUCTION_SITES).length > 0 && builders.length < BUILDERS) {
-                    SpawnBuilder();
-                    return;
-                }
+
+            let repairs = _.filter(Game.creeps, (creep) => creep.memory.action == REPAIR);
+            if (repairs.length < REPAIRS && repairs.length < carryers.length) {
+                SpawnRepair(energy);
+            }
+            if (energy < 300) return;
+            let builders = _.filter(Game.creeps, (creep) => creep.memory.action == BUILDER);
+            if (spw.room.find(FIND_CONSTRUCTION_SITES).length > 0 && builders.length < BUILDERS) {
+                SpawnBuilder(energy);
+                return;
             }
         }
+        ///////// Visual
+        else {
+            spw.room.visual.text('🛠️' + Game.creeps[spw.spawning.name].memory.action,
+                spw.pos.x + 1, spw.pos.y,
+                {align: 'left', opacity: 0.7});
+        }
+
         for (let name in Memory.creeps)
             if (!Game.creeps[name]) {
                 delete Memory.creeps[name];
-                console.log('Clearing non-existing creep memory:', name);
+                console.log('✝: '+ name);
             }
     }
 };

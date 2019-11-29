@@ -4,7 +4,10 @@ let carry = {
      **/
     run: function (creep, spw) {
         if (creep.ticksToLive < 50) {
-            Memory.need_energy.push(creep.memory.pet);
+            if (creep.memory.pet) {
+                Memory.need_energy.push(creep.memory.pet);
+                delete creep.memory.pet;
+            }
             if (spw.recycleCreep(creep) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(spw);
             }
@@ -12,7 +15,7 @@ let carry = {
         }
 
         let TakeCareOfPet = function (pet) {
-            if (creep.store[RESOURCE_ENERGY] < creep.store.getFreeCapacity()) {
+            if (creep.store[RESOURCE_ENERGY] < creep.store.getFreeCapacity()*0.5) {
                 if (!GetEnergy(true))
                     return;
             }
@@ -64,15 +67,15 @@ let carry = {
         let PickupDroppedResources = function () {
             let drop = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {
                 filter: (s) => {
-                    return s[RESOURCE_ENERGY] >= 5;
+                    return s[RESOURCE_ENERGY] >= 30;
                 }
             });
+            //drop.sort((a,b) => a[RESOURCE_ENERGY] - b[RESOURCE_ENERGY]);
             if (drop) {
                 if (creep.pickup(drop) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(drop);
                 } else {
                     creep.say('🔼');
-                    creep.memory.givestorrage = true;
                 }
             } else {
                 creep.moveTo(spw.pos.x + 3, spw.pos.y + 5);
@@ -86,9 +89,8 @@ let carry = {
             if (creep.memory.thaget === undefined) {
                 let structures = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (structure) => {
-                        return (structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE || structure.structureType == STRUCTURE_SPAWN || structure.structureType == STRUCTURE_EXTENSION
-                            )
-                            && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+                        return ((structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 500)
+                            || ((structure.structureType == STRUCTURE_SPAWN || structure.structureType == STRUCTURE_EXTENSION) && structure.store.getFreeCapacity(RESOURCE_ENERGY) >= 50);
                     }
                 });
                 if (structures !== undefined && structures !== null) {
@@ -134,7 +136,7 @@ let carry = {
                     DeliverEnergy();
                 }
             case 2:
-                if (creep.memory.pet !== undefined) {
+                if (creep.memory.pet !== undefined && creep.memory.pet !== null) {
                     creep.say(creep.memory.pet.substr(6));
                     creep.memory.init = 3;
                     break;
