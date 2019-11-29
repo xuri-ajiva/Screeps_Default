@@ -150,9 +150,6 @@ let carry = {
                 } else
                     creep.memory.init = 2;
                 break;
-            //get creep
-            case 4:
-                break;
             default:
                 creep.memory.init = 0;
                 break;
