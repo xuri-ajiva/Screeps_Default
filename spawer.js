@@ -3,35 +3,36 @@ const BUILDER = 'builder';
 const UPGRADE = 'upgrade';
 const CARRYER = 'carry';
 const ARCHITECT = 'architect';
-const CARRYERS = 18;
+const CARRYERS = 12;
 const MINERS = 9;
 const BUILDERS = 4;
+const UPGRADERS = 4;
 
 
 var spawnner = {
-    Check: function (game) {
+    Check: function (game,Spw) {
         let spawn = function (obj, ls, adj) {
             var newName = obj + Game.time;
             if (adj) {
                 let memory = Object.assign({}, {action: obj}, adj);
-                console.log('Spawning new ' + obj + 'er: ' + newName + "  => " + Memory.Spw.spawnCreep(ls, newName, {
+                console.log('Spawning new ' + obj + 'er: ' + newName + "  => " + Spw.spawnCreep(ls, newName, {
                     memory
                 }));
             } else {
-                console.log('Spawning new ' + obj + 'er: ' + newName + "  => " + Memory.Spw.spawnCreep(ls, newName, {memory: {action: obj}}));
+                console.log('Spawning new ' + obj + 'er: ' + newName + "  => " + Spw.spawnCreep(ls, newName, {memory: {action: obj}}));
             }
             return newName;
         };
 
         function SpawnMiner() {
             let name = spawn(MINER, [WORK, MOVE, WORK], {
-                source: Memory.Spw.room.find(FIND_SOURCES)[parseInt(Math.random() * 1)].id,
+                source: Spw.room.find(FIND_SOURCES)[parseInt(Math.random() * 1)].id,
                 count: 0
             });
         }
 
         function SpawnBuilder() {
-            let name = spawn(BUILDER, [MOVE, CARRY, CARRY, WORK]);
+            let name = spawn(BUILDER, [MOVE, CARRY, WORK, WORK]);
             if (Memory.need_energy === undefined) {
                 console.log("create: " + name);
                 Memory.need_energy = [name];
@@ -40,7 +41,6 @@ var spawnner = {
                 Memory.need_energy.push(name);
             }
         }
-
 
         function SpawnUpgrader() {
             let name = spawn(UPGRADE, [MOVE, CARRY, WORK]);
@@ -53,11 +53,25 @@ var spawnner = {
             }
         }
 
-        function SpawnCarry() {
+        function SpawnCarry(length, available) {
+            let parts = [MOVE, MOVE, CARRY, CARRY];
+            if (available >= 300) {
+                if (length > 3) {
+                    parts.push(MOVE)
+                }
+                if (length > 9) {
+                    parts.push(CARRY)
+                }
+            } else if (available >= 400) {
+                parts.push(MOVE);
+                parts.push(MOVE);
+                parts.push(CARRY);
+                parts.push(CARRY);
+            }
             if (Memory.need_energy !== undefined) {
-                let name = spawn(CARRYER, [MOVE, MOVE, CARRY, CARRY], {my_proiryty: Memory.need_energy.shift()});
+                let name = spawn(CARRYER, parts, {pet: Memory.need_energy.shift()});
             } else {
-                let name = spawn(CARRYER, [MOVE, MOVE, CARRY, CARRY]);
+                let name = spawn(CARRYER, parts);
             }
         }
 
@@ -68,10 +82,11 @@ var spawnner = {
 
         //console.log(MINER + "s: " + miners.length + "          " + CARRYER + "ers: " + carryers.length);
 
-        let carryers = _.filter(Game.creeps, (creep) => creep.memory.action === CARRYER && creep.memory.my_proiryty !== undefined);
-        Memory.ftee_carry = _.filter(carryers, function (s) {
-            return s.memory.my_proiryty.name;
+        let carryers = _.filter(Game.creeps, (creep) => creep.memory.action === CARRYER && creep.memory.pet != null);
+        Memory.ftee_carry = _.map(carryers, function (s) {
+            return s.memory.pet.substr(7);
         });
+
 
         // console.log("unTaken: " + Memory.ftee_carry.length);
         // Spawner
@@ -80,27 +95,39 @@ var spawnner = {
             Memory.init = true;
         }
 
-        if (Memory.Spw.store[RESOURCE_ENERGY] > 250 && !Memory.Spw.spawning) {
+        if (!Spw.spawning) {
+            let energy = 0;
+            _.forEach(Spw.room.find(FIND_STRUCTURES, {
+                filter: (structure) => {
+                    if (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN)
+                        return structure.store[RESOURCE_ENERGY];
+                }
+            }), (s) => energy += s.store[RESOURCE_ENERGY]);
+            //console.log(energy);
+            //if (energy < 250) return;
+
             let miners = _.filter(Game.creeps, (creep) => creep.memory.action == MINER);
             let carryers = _.filter(Game.creeps, (creep) => creep.memory.action == CARRYER);
-            let upgraderes = _.filter(Game.creeps, (creep) => creep.memory.action == UPGRADE);
-            let builders = _.filter(Game.creeps, (creep) => creep.memory.action == BUILDER);
 
             if (miners.length < MINERS && miners.length < carryers.length) {
                 SpawnMiner();
                 return;
             }
-            if (upgraderes.length < (carryers.length-6) - BUILDERS) {
+            let upgraderes = _.filter(Game.creeps, (creep) => creep.memory.action == UPGRADE);
+            if (upgraderes.length < UPGRADERS && upgraderes.length < carryers.length) {
                 SpawnUpgrader();
                 return;
             }
             if (carryers.length < CARRYERS) {
-                SpawnCarry();
+                SpawnCarry(carryers.length, energy);
                 return;
             }
-            if (Memory.Spw.room.find(FIND_CONSTRUCTION_SITES).length > 0 && builders.length < BUILDERS) {
-                SpawnBuilder();
-                return;
+            if (energy >= 300) {
+                let builders = _.filter(Game.creeps, (creep) => creep.memory.action == BUILDER);
+                if (Spw.room.find(FIND_CONSTRUCTION_SITES).length > 0 && builders.length < BUILDERS) {
+                    SpawnBuilder();
+                    return;
+                }
             }
         }
         for (let name in Memory.creeps)

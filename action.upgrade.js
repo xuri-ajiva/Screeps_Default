@@ -1,5 +1,8 @@
 let upgrade = {
-    run: function (creep) {
+    /** @param {Creep} creep
+     *  @param {Spawn} spw
+     **/
+    run: function (creep,spw) {
         //creep.store.energy = 0;
         if (creep.store[RESOURCE_ENERGY] > 0) {
             if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {

@@ -13,11 +13,11 @@ let architect = require('action.' + ARCHITECT);
 let summoner = require('spawer');
 
 module.exports.loop = function () {
-    Memory.Spw = Game.spawns['Spawn1'];
+    //Memory.Spw = Game.spawns['Spawn1'];
     //Memory.SW = Memory.Spw.room.find(FIND_SOURCES)[0];
-    let spw = Memory.Spw;
+    let spw = Game.spawns['Spawn1'];
 
-    summoner.Check(Game);
+    summoner.Check(Game, spw);
 
     ///Main Select
 
@@ -30,23 +30,23 @@ module.exports.loop = function () {
         if (creep) {
             if (creep.memory.action == MINER) {
                 //creep.suicide();
-                miner.run(creep);
+                miner.run(creep,spw);
             }
             if (creep.memory.action == UPGRADE) {
                 //creep.suicide();
-                upgrade.run(creep);
+                upgrade.run(creep,spw);
             }
             if (creep.memory.action == BUILDER) {
                 //creep.suicide();
-                builder.run(creep);
+                builder.run(creep,spw);
             }
             if (creep.memory.action == CARRYER) {
                 //creep.suicide();
-                carry.run(creep);
+                carry.run(creep,spw);
             }
             if (creep.memory.action == ARCHITECT) {
                 //creep.suicide();
-                architect.run(creep);
+                architect.run(creep,spw);
             }
         }
     }

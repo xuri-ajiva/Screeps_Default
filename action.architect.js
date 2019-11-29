@@ -1,12 +1,15 @@
 let architect = {
-    run: function (creep) {
+    /** @param {Creep} creep
+     *  @param {Spawn} spw
+     **/
+    run: function (creep, spw) {
         if (creep.memory.paths === undefined) {
-            let begin = Memory.Spw.pos;
+            let begin = spw.pos;
 
 
             let fin = [];
             var resor = creep.room.find(FIND_SOURCES);
-            resor.push(Memory.Spw.room.controller);
+            resor.push(spw.room.controller);
             for (let gx in resor) {
                 let ret = PathFinder.search(
                     begin, resor[gx],
@@ -57,7 +60,7 @@ let architect = {
             places.push({x: -2, y: -3});
 
             for (let p in places) {
-                creep.room.createConstructionSite(Memory.Spw.pos.x + places[p].x, Memory.Spw.pos.y + places[p].y, STRUCTURE_EXTENSION);
+                creep.room.createConstructionSite(spw.pos.x + places[p].x, spw.pos.y + places[p].y, STRUCTURE_EXTENSION);
             }
             places = [];
             for (let x = -2; x < 3; x++) {
@@ -66,10 +69,10 @@ let architect = {
                 }
             }
             for (let p in places) {
-                creep.room.createConstructionSite(Memory.Spw.pos.x + places[p].x, Memory.Spw.pos.y + places[p].y, STRUCTURE_ROAD);
+                creep.room.createConstructionSite(spw.pos.x + places[p].x, spw.pos.y + places[p].y, STRUCTURE_ROAD);
             }
         } else {
-            Memory.Spw.recycleCreep(creep);
+            spw.recycleCreep(creep);
             console.log("resycle!");
             // let cs = creep.room.find(FIND_STRUCTURES);
             // for (let c in cs) {
