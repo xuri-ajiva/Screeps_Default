@@ -11,7 +11,7 @@ let miner = require(act + MINER);
 let upgrade = require(act + UPGRADE);
 let builder = require(act + BUILDER);
 let carry = require(act + CARRYER);
-let architect = require(act + ARCHITECT);
+let defend = require('defend');
 
 let summoner = require('spawer');
 
@@ -20,36 +20,37 @@ module.exports.loop = function () {
     //Memory.SW = Memory.Spw.room.find(FIND_SOURCES)[0];
     let spw = Game.spawns['Spawn1'];
 
+    defend.run(spw.room);
+
     switch (Memory._count) {
         case 0:
             Memory.init = spw.room.controller.level;
-        //     console.log("_private count: "+Memory._count++);
-        //     break;
-        // case 64:
-        //     console.log("_private count: "+Memory._count++);
-        //     break;
-        // case 128:
-        //     console.log("_private count: "+Memory._count++);
-        //     break;
-        // case 192:
-            console.log("💬: private count: "+Memory._count++);
+            //     console.log("_private count: "+Memory._count++);
+            //     break;
+            // case 64:
+            //     console.log("_private count: "+Memory._count++);
+            //     break;
+            // case 128:
+            //     console.log("_private count: "+Memory._count++);
+            //     break;
+            // case 192:
+            console.log("💬: private count: " + Memory._count++);
             break;
         case 255:
             let carryers = _.filter(Game.creeps, (creep) => creep.memory.action === CARRYER && creep.memory.pet != null);
             let pets = [];
-            for(let c in carryers){
+            for (let c in carryers) {
                 let ca = carryers[c];
-                if(pets.includes(ca.memory.pet)){
-                    console.log('removing duplicate: ' +ca.memory.pet)
+                if (pets.includes(ca.memory.pet)) {
+                    console.log('removing duplicate: ' + ca.memory.pet)
                     delete ca.memory.pet;
-                }
-                else{
+                } else {
                     pets.push(ca.memory.pet);
                 }
             }
             Memory._count = 0;
 
-            summoner.Check(Game, spw,true);
+            summoner.Check(Game, spw, true);
             break;
         default:
             Memory._count++;
@@ -67,33 +68,41 @@ module.exports.loop = function () {
         //creep.suicide();
 
         if (creep) {
-            if (creep.memory.action == MINER) {
-                //creep.suicide();
-                miner.run(creep, spw);
-            }
-            if (creep.memory.action == UPGRADE) {
-                //creep.suicide();
-                upgrade.run(creep, spw);
-            }
-            if (creep.memory.action == BUILDER) {
-                //creep.suicide();
-                builder.run(creep, spw);
-            }
-            if (creep.memory.action == CARRYER) {
-                //creep.suicide();
-                carry.run(creep, spw);
-            }
-            if (creep.memory.action == ARCHITECT) {
-                //creep.suicide();
-                architect.run(creep, spw);
-            }
-            if (creep.memory.action == REPAIR) {
-                //creep.suicide();
-                repair.run(creep, spw);
+            switch (creep.memory.action) {
+                case MINER:
+                    if (creep.ticksToLive < 50)
+                        miner.recycle(creep, spw);
+                    else
+                        miner.run(creep, spw);
+                    break;
+                case UPGRADE:
+                    if (creep.ticksToLive < 50)
+                        upgrade.recycle(creep, spw);
+                    else
+                        upgrade.run(creep, spw);
+                    break;
+                case BUILDER:
+                    if (creep.ticksToLive < 50)
+                        builder.recycle(creep, spw);
+                    else
+                        builder.run(creep, spw);
+                    break;
+                case CARRYER:
+                    if (creep.ticksToLive < 50)
+                        carry.recycle(creep, spw);
+                    else
+                        carry.run(creep, spw);
+                    break;
+                case REPAIR:
+                    if (creep.ticksToLive < 200)
+                        repair.recycle(creep, spw);
+                    else
+                        repair.run(creep, spw);
+                    break;
+                default:
+                    break;
             }
         }
     }
-
-
 };
 

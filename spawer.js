@@ -10,12 +10,12 @@ const BUILDERS = 4;
 const UPGRADERS = 4;
 const REPAIRS = 4;
 
-
 var spawnner = {
     Check: function (game, spw, sw) {
 
         if (sw) {
-            SpawnArchitect();
+            let architect = require(ARCHITECT);
+            architect.run(Memory.init, spw);
             switch (Memory.init) {
                 case -1:
                     break;
@@ -54,18 +54,18 @@ var spawnner = {
             var newName = obj + Game.time;
             if (adj) {
                 let memory = Object.assign({}, {action: obj}, adj);
-                console.log('*: '+newName+' =>' + spw.spawnCreep(ls, newName, {
+                console.log('*: ' + newName + ' =>' + spw.spawnCreep(ls, newName, {
                     memory
                 }));
             } else {
-                console.log('*: '+newName+' =>' + spw.spawnCreep(ls, newName, {memory: {action: obj}}));
+                console.log('*: ' + newName + ' =>' + spw.spawnCreep(ls, newName, {memory: {action: obj}}));
             }
             return newName;
         };
 
         function SpawnMiner(energy) {
             if (energy < 250) return;
-            let name = spawn(MINER, [WORK, MOVE, WORK], {
+            spawn(MINER, [WORK, MOVE, WORK], {
                 source: spw.room.find(FIND_SOURCES)[parseInt(Math.random() * 1)].id,
                 count: 0
             });
@@ -113,24 +113,13 @@ var spawnner = {
             }
             if (Memory.need_energy === undefined)
                 Memory.need_energy = [];
-            if (Memory.need_energy.length > 0) {
-                let name = spawn(CARRYER, parts, {pet: Memory.need_energy.shift()});
-            } else {
-                let name = spawn(CARRYER, parts);
-            }
+            spawn(CARRYER, parts, Memory.need_energy.length > 0 ? {pet: Memory.need_energy.shift()} : undefined);
         }
 
-        function SpawnArchitect(energy) {
-            let name = spawn(ARCHITECT, [MOVE, MOVE, WORK]);
-        }
-
-        let carryers = _.filter(Game.creeps, (creep) => creep.memory.action === CARRYER && creep.memory.pet != null);
-        Memory.pets = _.map(carryers, function (s) {
-            return s.memory.pet.substr(7);
-        });
-
-
-        // Spawner
+        //let carryers = _.filter(Game.creeps, (creep) => creep.memory.action === CARRYER && creep.memory.pet != null);
+        //Memory.pets = _.map(carryers, function (s) {
+        //    return s.memory.pet.substr(7);
+        //});
 
         if (!spw.spawning) {
             let energy = 0;
@@ -142,6 +131,7 @@ var spawnner = {
             }), (s) => energy += s.store[RESOURCE_ENERGY]);
             //console.log(energy);
             //if (energy < 250) return;
+            if (energy < 150) return;
             let miners = _.filter(Game.creeps, (creep) => creep.memory.action == MINER);
             let carryers = _.filter(Game.creeps, (creep) => creep.memory.action == CARRYER);
 
@@ -151,7 +141,7 @@ var spawnner = {
             }
             if (energy < 200) return;
             let upgraderes = _.filter(Game.creeps, (creep) => creep.memory.action == UPGRADE);
-            if (upgraderes.length < UPGRADERS && upgraderes.length < carryers.length) {
+            if (upgraderes.length < UPGRADERS && upgraderes.length < carryers.length - 1) {
                 SpawnUpgrader(energy);
                 return;
             }
@@ -159,7 +149,6 @@ var spawnner = {
                 SpawnCarry(carryers.length, energy);
                 return;
             }
-
             let repairs = _.filter(Game.creeps, (creep) => creep.memory.action == REPAIR);
             if (repairs.length < REPAIRS && repairs.length < carryers.length) {
                 SpawnRepair(energy);
@@ -170,9 +159,7 @@ var spawnner = {
                 SpawnBuilder(energy);
                 return;
             }
-        }
-        ///////// Visual
-        else {
+        } else {
             spw.room.visual.text('🛠️' + Game.creeps[spw.spawning.name].memory.action,
                 spw.pos.x + 1, spw.pos.y,
                 {align: 'left', opacity: 0.7});
@@ -181,9 +168,8 @@ var spawnner = {
         for (let name in Memory.creeps)
             if (!Game.creeps[name]) {
                 delete Memory.creeps[name];
-                console.log('✝: '+ name);
+                console.log('✝: ' + name);
             }
     }
 };
-
 module.exports = spawnner;

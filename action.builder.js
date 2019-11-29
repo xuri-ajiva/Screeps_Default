@@ -17,7 +17,11 @@ let upgrade = {
                 creep.moveTo(spw);
             }
         }
-
+    },
+    recycle: function (creep, spw) {
+        if (spw.recycleCreep(creep) === ERR_NOT_IN_RANGE) {
+            creep.moveTo(spw);
+        }
     }
 };
 

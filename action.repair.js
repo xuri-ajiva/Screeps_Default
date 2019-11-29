@@ -15,13 +15,14 @@ let repair = {
                 break;
             case  1:
                 const targets = creep.room.find(FIND_STRUCTURES, {
-                    filter: object => ((object.hits < max_hits) &&(object.hits < object.hitsMax) )
+                    filter: object => ((object.hits < max_hits) && (object.hits < object.hitsMax))
                 });
                 targets.sort((a, b) => a.hits - b.hits);
                 creep.memory.targets = _.map(targets, (t) => {
                     return t.id;
                 });
                 creep.memory.init = 2;
+                creep.moveTo(spw.x - 8,spw.y+3);
                 break;
             case  2:
                 if (creep.memory.targets.length > 0) {
@@ -42,7 +43,7 @@ let repair = {
                         creep.moveTo(target);
                     else {
                         creep.moveTo(target.x - 2, target.y - 2);
-                        creep.say('🔧: ' + target.hits);
+                        //creep.say('🔧: ' + target.hits);
                     }
                 } else {
                     delete creep.memory.target;
@@ -52,6 +53,12 @@ let repair = {
             default:
                 creep.memory.init = 0;
                 break
+        }
+    },
+
+    recycle: function (creep, spw) {
+        if (spw.recycleCreep(creep) === ERR_NOT_IN_RANGE) {
+            creep.moveTo(spw);
         }
     }
 };

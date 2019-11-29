@@ -3,19 +3,8 @@ let carry = {
      *  @param {Spawn} spw
      **/
     run: function (creep, spw) {
-        if (creep.ticksToLive < 50) {
-            if (creep.memory.pet) {
-                Memory.need_energy.push(creep.memory.pet);
-                delete creep.memory.pet;
-            }
-            if (spw.recycleCreep(creep) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(spw);
-            }
-            return;
-        }
-
         let TakeCareOfPet = function (pet) {
-            if (creep.store[RESOURCE_ENERGY] < creep.store.getFreeCapacity()*0.5) {
+            if (creep.store[RESOURCE_ENERGY] < creep.store.getFreeCapacity() * 0.5) {
                 if (!GetEnergy(true))
                     return;
             }
@@ -26,9 +15,9 @@ let carry = {
                     if (creep.transfer(_pet, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
                         creep.moveTo(_pet);
                     }
-                } else {
-                    creep.say('💚');
-                }
+                }// else {
+                    //creep.say('💚');
+                //}
             } else if (!spw.spawning) {
                 console.log("removing: " + creep.memory.pet);
                 delete creep.memory.pet;
@@ -52,7 +41,7 @@ let carry = {
                         creep.moveTo(s);
                         return false;
                     } else {
-                        creep.say('♒');
+                        //creep.say('♒');
                         return true;
                     }
                 } else {
@@ -74,9 +63,9 @@ let carry = {
             if (drop) {
                 if (creep.pickup(drop) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(drop);
-                } else {
-                    creep.say('🔼');
-                }
+                }// else {
+                    //creep.say('🔼');
+                //}
             } else {
                 creep.moveTo(spw.pos.x + 3, spw.pos.y + 5);
             }
@@ -89,17 +78,16 @@ let carry = {
             if (creep.memory.thaget === undefined) {
                 let structures = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (structure) => {
-                        return ((structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 500)
+                        return ((structure.structureType == STRUCTURE_TOWER || structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 500)
                             || ((structure.structureType == STRUCTURE_SPAWN || structure.structureType == STRUCTURE_EXTENSION) && structure.store.getFreeCapacity(RESOURCE_ENERGY) >= 50);
                     }
                 });
                 if (structures !== undefined && structures !== null) {
-                    var str = structures;
-                    if (str) {
+                    if (structures) {
                         creep.say('📝');
-                        creep.memory.thaget = str.id;
-                    } else
-                        console.log(str);
+                        creep.memory.thaget = structures.id;
+                    } //else
+                        //console.log(str);
                 } else {
                     creep.moveTo(spw.pos.x - 7, spw.pos.y + 1);
                     //creep.say('💦');
@@ -113,7 +101,7 @@ let carry = {
                     creep.moveTo(struct);
                     break;
                 case OK:
-                    creep.say('💱');
+                    //creep.say('💱');
                     delete creep.memory.thaget;
                     break;
                 default:
@@ -168,6 +156,16 @@ let carry = {
             default:
                 creep.memory.init = 0;
                 break;
+        }
+    },
+
+    recycle: function (creep, spw) {
+        if (creep.memory.pet) {
+            Memory.need_energy.push(creep.memory.pet);
+            delete creep.memory.pet;
+        }
+        if (spw.recycleCreep(creep) === ERR_NOT_IN_RANGE) {
+            creep.moveTo(spw);
         }
     }
 };
