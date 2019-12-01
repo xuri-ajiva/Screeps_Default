@@ -11,7 +11,7 @@ let carry = {
 
             let _pet = Game.getObjectById(pet);
             if (_pet !== undefined && _pet != null) {
-                if (_pet.store[RESOURCE_ENERGY] < _pet.store.capacity) {
+                if (_pet.store[RESOURCE_ENERGY] < _pet.store.getFreeCapacity(RESOURCE_ENERGY)) {
                     if (creep.transfer(_pet, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
                         creep.moveTo(_pet);
                     }
