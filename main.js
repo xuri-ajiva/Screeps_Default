@@ -40,19 +40,7 @@ module.exports.loop = function () {
             console.log("💬: private count: " + Memory._count++);
             break;
         case 255:
-            let carryers = _.filter(Game.creeps, (creep) => creep.memory.action === CARRYER && creep.memory.pet != null);
-            let pets = [];
-            for (let c in carryers) {
-                let ca = carryers[c];
-                if (pets.includes(ca.memory.pet)) {
-                    console.log('removing duplicate: ' + ca.memory.pet)
-                    delete ca.memory.pet;
-                } else {
-                    pets.push(ca.memory.pet);
-                }
-            }
             Memory._count = 0;
-
             summoner.Check(Game, spw, true);
             break;
         default:
@@ -71,6 +59,9 @@ module.exports.loop = function () {
         //creep.suicide();
 
         if (creep) {
+            /*if(creep.store[RESOURCE_ENERGY] == 0)
+                creep.suicide();*/
+
             switch (creep.memory.action) {
                 case MINER:
                     if (creep.ticksToLive < 50)
@@ -91,6 +82,7 @@ module.exports.loop = function () {
                         builder.run(creep, spw);
                     break;
                 case CARRYER:
+                    //creep.suicide();
                     if (creep.ticksToLive < 50)
                         carry.recycle(creep, spw);
                     else

@@ -9,15 +9,15 @@ let carry = {
                     return;
             }
 
-            let _pet = Game.creeps[pet];
-            if (_pet !== undefined) {
-                if (_pet.store[RESOURCE_ENERGY] < _pet.store.getFreeCapacity(RESOURCE_ENERGY)) {
+            let _pet = Game.getObjectById(pet);
+            if (_pet !== undefined && _pet != null) {
+                if (_pet.store[RESOURCE_ENERGY] < _pet.store.capacity) {
                     if (creep.transfer(_pet, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
                         creep.moveTo(_pet);
                     }
-                }// else {
-                    //creep.say('💚');
-                //}
+                } else {
+                    creep.say('💚');
+                }
             } else if (!spw.spawning) {
                 console.log("removing: " + creep.memory.pet);
                 delete creep.memory.pet;
@@ -41,7 +41,7 @@ let carry = {
                         creep.moveTo(s);
                         return false;
                     } else {
-                        //creep.say('♒');
+                        creep.say('♒');
                         return true;
                     }
                 } else {
@@ -56,16 +56,16 @@ let carry = {
         let PickupDroppedResources = function () {
             let drop = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {
                 filter: (s) => {
-                    return s[RESOURCE_ENERGY] >= 30;
+                    return s[RESOURCE_ENERGY] >= 5;
                 }
             });
             //drop.sort((a,b) => a[RESOURCE_ENERGY] - b[RESOURCE_ENERGY]);
             if (drop) {
                 if (creep.pickup(drop) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(drop);
-                }// else {
-                    //creep.say('🔼');
-                //}
+                } else {
+                    creep.say('🔼');
+                }
             } else {
                 creep.moveTo(spw.pos.x + 3, spw.pos.y + 5);
             }
@@ -82,7 +82,7 @@ let carry = {
                             || ((structure.structureType == STRUCTURE_SPAWN || structure.structureType == STRUCTURE_EXTENSION) && structure.store.getFreeCapacity(RESOURCE_ENERGY) >= 50);
                     }
                 });
-                if (structures !== undefined && structures !== null) {
+                if (structures !== undefined && structures != null) {
                     if (structures) {
                         creep.say('📝');
                         creep.memory.thaget = structures.id;
@@ -90,7 +90,7 @@ let carry = {
                         //console.log(str);
                 } else {
                     creep.moveTo(spw.pos.x - 7, spw.pos.y + 1);
-                    //creep.say('💦');
+                    creep.say('💦');
                     return false;
                 }
 
@@ -125,7 +125,7 @@ let carry = {
                 }
             case 2:
                 if (creep.memory.pet !== undefined && creep.memory.pet !== null) {
-                    creep.say(creep.memory.pet.substr(6));
+                    creep.say(creep.memory.pet.substr(7));
                     creep.memory.init = 3;
                     break;
                 }
@@ -138,8 +138,8 @@ let carry = {
             //if has creep
             case 3:
                 if (creep.memory.pet !== undefined) {
-                    let _owner = Game.creeps[creep.memory.pet];
-                    if (_owner !== undefined) {
+                    let _owner = Game.getObjectById(creep.memory.pet);
+                    if (_owner !== undefined || _owner != null) {
                         TakeCareOfPet(creep.memory.pet);
                         break;
                     } else if (!spw.spawning) {

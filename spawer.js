@@ -15,14 +15,39 @@ var spawnner = {
     Check: function (game, spw, sw) {
 
         if (sw) {
+            // Memory.VIP = [];
+            // let towers = room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
+            // towers.forEach(tower => Memory.VIP.push(tower.id));
             let architect = require(ARCHITECT);
             architect.run(Memory.init, spw);
+            if (Memory.need_energy === undefined)
+                Memory.need_energy = [];
+            if (Memory.query === undefined)
+                Memory.query = [];
+
+            let towers = spw.room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
+            towers.forEach((tower) => {
+                if (!Memory.pets.includes(tower.id))
+                    Memory.need_energy.push(tower.id);
+            });
+
+            let carryers = _.filter(Game.creeps, (creep) => creep.memory.action === CARRYER && creep.memory.pet != null);
+            let pets = [];
+            for (let c in carryers) {
+                let ca = carryers[c];
+                if (pets.includes(ca.memory.pet)) {
+                    console.log('removing duplicate: ' + ca.memory.pet)
+                    delete ca.memory.pet;
+                } else {
+                    pets.push(ca.memory.pet);
+                }
+            }
+
             switch (Memory.init) {
                 case -1:
                     break;
                 case 0:
-                    if (Memory.need_energy === undefined)
-                        Memory.need_energy = [];
+
                     console.log('INIT: ' + Memory.init);
                     break;
                 case 1:
@@ -48,6 +73,13 @@ var spawnner = {
                     break;
                 default:
                     Memory.init = 0;
+            }
+        }
+
+        if (Memory.query.length > 0) {
+            var c = Game.creeps[Memory.query.pop()];
+            if (c) {
+                Memory.need_energy.push(c.id);
             }
         }
 
@@ -77,7 +109,7 @@ var spawnner = {
             let name = spawn(REPAIR, [MOVE, CARRY, CARRY, CARRY, WORK, WORK],);
 
             console.log("🔜: " + name);
-            Memory.need_energy.push(name);
+            Memory.query.push(name);
 
         }
 
@@ -85,7 +117,7 @@ var spawnner = {
             let name = spawn(BUILDER, [MOVE, CARRY, WORK, WORK]);
 
             console.log("🔜: " + name);
-            Memory.need_energy.push(name);
+            Memory.query.push(name);
 
         }
 
@@ -93,7 +125,7 @@ var spawnner = {
             let name = spawn(UPGRADE, [MOVE, CARRY, WORK]);
 
             console.log("🔜: " + name);
-            Memory.need_energy.push(name);
+            Memory.query.push(name);
 
         }
 
@@ -117,10 +149,10 @@ var spawnner = {
             spawn(CARRYER, parts, Memory.need_energy.length > 0 ? {pet: Memory.need_energy.shift()} : undefined);
         }
 
-        //let carryers = _.filter(Game.creeps, (creep) => creep.memory.action === CARRYER && creep.memory.pet != null);
-        //Memory.pets = _.map(carryers, function (s) {
-        //    return s.memory.pet.substr(7);
-        //});
+        let carryers = _.filter(Game.creeps, (creep) => creep.memory.action === CARRYER && creep.memory.pet != null);
+        Memory.pets = _.map(carryers, function (s) {
+            return s.memory.pet;
+        });
 
         if (!spw.spawning) {
             let energy = 0;
