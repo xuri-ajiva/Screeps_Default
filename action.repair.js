@@ -4,7 +4,7 @@ let repair = {
      *  @param {Spawn} spw
      **/
     run: function (creep, spw) {
-        creep.say('⬇');
+        //creep.say('⬇');
 
         if (creep.store[RESOURCE_ENERGY] === 0) return;
         // creep.memory.init = 0;

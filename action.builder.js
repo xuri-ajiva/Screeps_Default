@@ -3,7 +3,7 @@ let upgrade = {
      *  @param {Spawn} spw
      **/
     run: function (creep, spw) {
-        creep.say('⬇');
+        //creep.say('⬇');
         let construct = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
         if (construct !== undefined && construct !== null) {
             let ret = creep.build(construct);
