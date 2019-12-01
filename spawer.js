@@ -4,6 +4,7 @@ const UPGRADE = 'upgrade';
 const CARRYER = 'carry';
 const ARCHITECT = 'architect';
 const REPAIR = 'repair';
+const LOOTER = 'lootcolector';
 const CARRYERS = 16;
 const MINERS = 9;
 const BUILDERS = 4;
@@ -153,6 +154,17 @@ var spawnner = {
             if (repairs.length < REPAIRS && repairs.length < carryers.length) {
                 SpawnRepair(energy);
             }
+
+            let looters = _.filter(Game.creeps, (creep) => creep.memory.action == LOOTER);
+            if (looters.length < 1 && looters.length < carryers.length && spw.room.find(FIND_RUINS, {
+                filter: (structure) => {
+                    return structure.store[RESOURCE_ENERGY] > 0;
+                }
+            }).length > 0) {
+                spawn(LOOTER, [MOVE, CARRY, WORK]);
+            }
+
+
             if (energy < 300) return;
             let builders = _.filter(Game.creeps, (creep) => creep.memory.action == BUILDER);
             if (spw.room.find(FIND_CONSTRUCTION_SITES).length > 0 && builders.length < BUILDERS) {

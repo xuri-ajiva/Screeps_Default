@@ -27,26 +27,25 @@ let repair = {
                 });
                 */
                 creep.memory.init = 2;
-                creep.moveTo(spw.x - 8,spw.y+3);
-                //break;
+                creep.moveTo(spw.x - 8, spw.y + 3);
+            //break;
             case  2:
                 //if (creep.memory.targets.length > 0) {
-                    if (creep.memory.target === undefined) {
-                        creep.memory.target = creep.pos.findClosestByPath(FIND_STRUCTURES,{
-                                        filter: object => ((object.hits < max_hits) && (object.hits < object.hitsMax))
-                                    }).id;
-                        
-                        
-                        
-                        //creep.memory.targets.pop();
-                    } else {
-                        delete creep.memory.target;
-                    }
-                    creep.memory.init = 3;
+                if (creep.memory.target === undefined) {
+                    let need_repair = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: object => ((object.hits < max_hits) && (object.hits < object.hitsMax))});
+
+                    if (need_repair)
+                        creep.memory.target = need_repair.id;
+                    else
+                        creep.moveTo(spw.pos.x - 4, spw.pos.y - 4);
+                } else {
+                    delete creep.memory.target;
+                }
+                creep.memory.init = 3;
                 //} else {
-                    //creep.memory.init = 1;
-                    break;
-                //}
+                //creep.memory.init = 1;
+                break;
+            //}
             case  3:
                 let target = Game.getObjectById(creep.memory.target);
                 if (target !== undefined && target !== null && (target.hits !== target.hitsMax && target.hits < max_hits)) {

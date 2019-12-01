@@ -2,8 +2,7 @@ let looter = {
     /** @param {Creep} creep
      *  @param {Spawn} spw
      **/
-    run: function(creep,spw) {
-
+    run: function (creep, spw) {
         switch (creep.memory.init) {
             case 0:
                 creep.memory.init = 1;
@@ -16,7 +15,7 @@ let looter = {
                     }
                 });
 
-                if (ruin === undefined|| ruin === null) {
+                if (ruin === undefined || ruin === null) {
                     creep.memory.init = 3;
                 }
 
@@ -31,13 +30,9 @@ let looter = {
                         switch (creep.withdraw(r, RESOURCE_ENERGY)) {
                             case ERR_NOT_IN_RANGE:
                                 creep.moveTo(r);
-                                break;
+                                return;
                             case OK:
-                                break;
-                            case ERR_NOT_ENOUGH_RESOURCES:
-                                creep.memory.init = 1;
-                                delete creep.memory.target;
-                                break;
+                                return;
                             default:
                                 if (r.store[RESOURCE_ENERGY] === 0) {
                                     creep.memory.init = 1;
@@ -45,18 +40,16 @@ let looter = {
                                 }
                                 break;
                         }
-                    } else {
-                        creep.memory.init = 1;
                     }
-                } else {
-                    creep.memory.init = 1;
                 }
+                creep.memory.init = 1;
                 break;
             case 3:
                 if (spw.recycleCreep(creep) === ERR_NOT_IN_RANGE) {
                     creep.moveTo(spw);
+                } else {
+                    console.log('resycle: ' + creep.name);
                 }
-
                 break;
             default:
                 creep.memory.init = 0;
@@ -66,7 +59,7 @@ let looter = {
     },
 
 
-    recycle: function(creep, spw) {
+    recycle: function (creep, spw) {
         if (spw.recycleCreep(creep) === ERR_NOT_IN_RANGE) {
             creep.moveTo(spw);
         }

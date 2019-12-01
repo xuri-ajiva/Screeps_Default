@@ -5,12 +5,15 @@ const UPGRADE = 'upgrade';
 const CARRYER = 'carry';
 const ARCHITECT = 'architect';
 const REPAIR = 'repair';
+const LOOTER = 'lootcolector';
 
 let repair = require(act + REPAIR);
 let miner = require(act + MINER);
 let upgrade = require(act + UPGRADE);
 let builder = require(act + BUILDER);
 let carry = require(act + CARRYER);
+let looter = require('special.' + LOOTER);
+
 let defend = require('defend');
 
 let summoner = require('spawer');
@@ -98,6 +101,12 @@ module.exports.loop = function () {
                         repair.recycle(creep, spw);
                     else
                         repair.run(creep, spw);
+                    break;
+                case LOOTER:
+                    if (creep.ticksToLive < 200)
+                        looter.recycle(creep, spw);
+                    else
+                        looter.run(creep, spw);
                     break;
                 default:
                     break;
