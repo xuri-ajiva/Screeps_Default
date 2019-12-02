@@ -33,7 +33,7 @@ let repair = {
             case  2:
                 //if (creep.memory.targets.length > 0) {
                 if (creep.memory.target === undefined) {
-                    let need_repair = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: object => ((object.hits < max_hits) && (object.hits < object.hitsMax))});
+                    let need_repair = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: object => ((object.hits < max_hits) && (object.hits < object.hitsMax))});
 
                     if (need_repair)
                         creep.memory.target = need_repair.id;
