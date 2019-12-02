@@ -15,11 +15,10 @@ let carry = {
                     if (creep.transfer(_pet, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
                         creep.moveTo(_pet);
                     }
-                } else {
-                    creep.say('💚');
                 }
+                //else {creep.say('💚');}
             } else if (!spw.spawning) {
-                console.log("removing: " + creep.memory.pet);
+                console.log("❌ " + creep.memory.pet);
                 delete creep.memory.pet;
             }
         };
@@ -30,7 +29,7 @@ let carry = {
          */
         let GetEnergy = function (container) {
             if (container) {
-                var s = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                let s = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (structure) => {
                         return (structure.structureType === STRUCTURE_CONTAINER || structure.structureType === STRUCTURE_STORAGE)
                             && structure.store[RESOURCE_ENERGY] > 0;
@@ -41,7 +40,7 @@ let carry = {
                         creep.moveTo(s);
                         return false;
                     } else {
-                        creep.say('♒');
+                        //creep.say('♒');
                         return true;
                     }
                 } else {
@@ -87,7 +86,7 @@ let carry = {
                         creep.say('📝');
                         creep.memory.thaget = structures.id;
                     } //else
-                        //console.log(str);
+                    //console.log(str);
                 } else {
                     creep.moveTo(spw.pos.x - 7, spw.pos.y + 1);
                     creep.say('💦');
@@ -163,6 +162,8 @@ let carry = {
         }
         if (spw.recycleCreep(creep) === ERR_NOT_IN_RANGE) {
             creep.moveTo(spw);
+        } else {
+            Memory.creeps_count_by_action[creep.action]--;
         }
     }
 };

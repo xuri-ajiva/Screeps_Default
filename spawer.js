@@ -6,14 +6,13 @@ const ARCHITECT = 'architect';
 const REPAIR = 'repair';
 const LOOTER = 'lootcolector';
 const CARRYERS = 18;
-const MINERS = 9;
+const MINERS = 7;
 const BUILDERS = 4;
-const UPGRADERS = 8;
+const UPGRADERS = 4;
 const REPAIRS = 4;
 
 var spawnner = {
     Check: function (game, spw, sw) {
-
         if (sw) {
             // Memory.VIP = [];
             // let towers = room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
@@ -25,11 +24,18 @@ var spawnner = {
             if (Memory.query === undefined)
                 Memory.query = [];
 
-            let towers = spw.room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
-            towers.forEach((tower) => {
-                if (!Memory.pets.includes(tower.id))
-                    Memory.need_energy.push(tower.id);
-            });
+            Memory.creeps_count_by_action = {miner: 0, carry: 0, upgrade: 0, builder: 0, lootcolector: 0, repair: 0};
+            for (let it in Game.creeps) {
+                let creep = Game.creeps[it];
+                Memory.creeps_count_by_action[creep.memory.action] += 1;
+            }
+
+
+            // let towers = spw.room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
+            // towers.forEach((tower) => {
+            //     if (!Memory.pets.includes(tower.id))
+            //         Memory.need_energy.push(tower.id);
+            // });
 
             let carryers = _.filter(Game.creeps, (creep) => creep.memory.action === CARRYER && creep.memory.pet != null);
             let pets = [];
@@ -74,6 +80,7 @@ var spawnner = {
                 default:
                     Memory.init = 0;
             }
+            return;
         }
 
         if (Memory.query.length > 0) {
@@ -82,6 +89,12 @@ var spawnner = {
                 Memory.need_energy.push(c.id);
             }
         }
+        for (let name in Memory.creeps)
+            if (!Game.creeps[name]) {
+                delete Memory.creeps[name];
+                console.log('✝: ' + name);
+            }
+
 
         let spawn = function (obj, ls, adj) {
             var newName = obj + Game.time;
@@ -102,6 +115,7 @@ var spawnner = {
                 source: spw.room.find(FIND_SOURCES)[parseInt(Math.random() * 1)].id,
                 count: 0
             });
+            Memory.creeps_count_by_action[MINER] += 1;
         }
 
         function SpawnRepair(energy) {
@@ -111,6 +125,7 @@ var spawnner = {
             console.log("🔜: " + name);
             Memory.query.push(name);
 
+            Memory.creeps_count_by_action[REPAIR] += 1;
         }
 
         function SpawnBuilder(energy) {
@@ -119,6 +134,7 @@ var spawnner = {
             console.log("🔜: " + name);
             Memory.query.push(name);
 
+            Memory.creeps_count_by_action[BUILDER] += 1;
         }
 
         function SpawnUpgrader(energy) {
@@ -127,6 +143,7 @@ var spawnner = {
             console.log("🔜: " + name);
             Memory.query.push(name);
 
+            Memory.creeps_count_by_action[UPGRADE] += 1;
         }
 
         function SpawnCarry(length, available) {
@@ -147,6 +164,9 @@ var spawnner = {
             if (Memory.need_energy === undefined)
                 Memory.need_energy = [];
             spawn(CARRYER, parts, Memory.need_energy.length > 0 ? {pet: Memory.need_energy.shift()} : undefined);
+
+
+            Memory.creeps_count_by_action[CARRYER] += 1;
         }
 
         let carryers = _.filter(Game.creeps, (creep) => creep.memory.action === CARRYER && creep.memory.pet != null);
@@ -155,40 +175,34 @@ var spawnner = {
         });
 
         if (!spw.spawning) {
-            let energy = 0;
-            _.forEach(spw.room.find(FIND_STRUCTURES, {
-                filter: (structure) => {
-                    if (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN)
-                        return structure.store[RESOURCE_ENERGY];
-                }
-            }), (s) => energy += s.store[RESOURCE_ENERGY]);
+            let energy = spw.room.energyAvailable;
             //console.log(energy);
             //if (energy < 250) return;
             if (energy < 150) return;
-            let miners = _.filter(Game.creeps, (creep) => creep.memory.action == MINER);
-            let carryers = _.filter(Game.creeps, (creep) => creep.memory.action == CARRYER);
 
-            if (miners.length < MINERS && miners.length < carryers.length) {
+            let c_UPGRADE = Memory.creeps_count_by_action[UPGRADE];
+            let c_MINER = Memory.creeps_count_by_action[MINER];
+            let c_CARRYER =  Memory.creeps_count_by_action[CARRYER];
+            let c_REPAIR = Memory.creeps_count_by_action[REPAIR];
+            let c_LOOTER = Memory.creeps_count_by_action[LOOTER];
+            let c_BUILDER = Memory.creeps_count_by_action[BUILDER];
+            if (c_MINER < MINERS && c_MINER < c_CARRYER) {
                 SpawnMiner(energy);
                 return;
             }
             if (energy < 200) return;
-            let upgraderes = _.filter(Game.creeps, (creep) => creep.memory.action == UPGRADE);
-            if (upgraderes.length < UPGRADERS && upgraderes.length < carryers.length - 1) {
+            if (c_UPGRADE < UPGRADERS && c_UPGRADE < c_CARRYER - 1) {
                 SpawnUpgrader(energy);
                 return;
             }
-            if (carryers.length < CARRYERS) {
-                SpawnCarry(carryers.length, energy);
+            if (c_CARRYER < CARRYERS) {
+                SpawnCarry(c_CARRYER, energy);
                 return;
             }
-            let repairs = _.filter(Game.creeps, (creep) => creep.memory.action == REPAIR);
-            if (repairs.length < REPAIRS && repairs.length < carryers.length) {
+            if (c_REPAIR < REPAIRS && c_REPAIR < c_CARRYER) {
                 SpawnRepair(energy);
             }
-
-            let looters = _.filter(Game.creeps, (creep) => creep.memory.action == LOOTER);
-            if (looters.length < 1 && looters.length < carryers.length &&( spw.room.find(FIND_RUINS, {
+            if (c_LOOTER < 1 && c_LOOTER < c_CARRYER && (spw.room.find(FIND_RUINS, {
                 filter: (structure) => {
                     return structure.store[RESOURCE_ENERGY] > 0;
                 }
@@ -198,12 +212,12 @@ var spawnner = {
                 }
             }).length > 0)) {
                 spawn(LOOTER, [MOVE, CARRY, WORK]);
+                return;
             }
 
 
             if (energy < 300) return;
-            let builders = _.filter(Game.creeps, (creep) => creep.memory.action == BUILDER);
-            if (spw.room.find(FIND_CONSTRUCTION_SITES).length > 0 && builders.length < BUILDERS) {
+            if (spw.room.find(FIND_CONSTRUCTION_SITES).length > 0 && c_BUILDER < BUILDERS) {
                 SpawnBuilder(energy);
                 return;
             }
@@ -212,12 +226,6 @@ var spawnner = {
                 spw.pos.x + 1, spw.pos.y,
                 {align: 'left', opacity: 0.7});
         }
-
-        for (let name in Memory.creeps)
-            if (!Game.creeps[name]) {
-                delete Memory.creeps[name];
-                console.log('✝: ' + name);
-            }
     }
 };
 module.exports = spawnner;
