@@ -6,7 +6,7 @@ let repair = {
     run: function (creep, spw) {
         //creep.say('⬇');
 
-        if (creep.store[RESOURCE_ENERGY] === 0) return;
+        if (!creep.spawning && creep.store[RESOURCE_ENERGY] === 0) return;
         // creep.memory.init = 0;
         // delete creep.memory.targets
         // delete creep.memory.target;

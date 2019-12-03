@@ -5,84 +5,93 @@ const CARRYER = 'carry';
 const ARCHITECT = 'architect';
 const REPAIR = 'repair';
 const LOOTER = 'lootcolector';
-const CARRYERS = 18;
+const SPAWNHELPER = 'spawnhelper';
+const CARRYERS = 17; //(+1)
 const MINERS = 7;
 const BUILDERS = 4;
 const UPGRADERS = 4;
 const REPAIRS = 4;
 
 var spawnner = {
-    Check: function (game, spw, sw) {
-        if (sw) {
-            // Memory.VIP = [];
-            // let towers = room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
-            // towers.forEach(tower => Memory.VIP.push(tower.id));
-            let architect = require(ARCHITECT);
-            architect.run(Memory.init, spw);
-            if (Memory.need_energy === undefined)
-                Memory.need_energy = [];
-            if (Memory.query === undefined)
-                Memory.query = [];
+    INIT: function (Game, spw) {
+        // Memory.VIP = [];
+        // let towers = room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
+        // towers.forEach(tower => Memory.VIP.push(tower.id));
+        let architect = require(ARCHITECT);
+        architect.run(Memory.init, spw);
+        if (Memory.need_energy === undefined)
+            Memory.need_energy = [];
+        if (Memory.query === undefined)
+            Memory.query = [];
 
-            Memory.creeps_count_by_action = {miner: 0, carry: 0, upgrade: 0, builder: 0, lootcolector: 0, repair: 0};
-            for (let it in Game.creeps) {
-                let creep = Game.creeps[it];
-                Memory.creeps_count_by_action[creep.memory.action] += 1;
-            }
-
-
-            // let towers = spw.room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
-            // towers.forEach((tower) => {
-            //     if (!Memory.pets.includes(tower.id))
-            //         Memory.need_energy.push(tower.id);
-            // });
-
-            let carryers = _.filter(Game.creeps, (creep) => creep.memory.action === CARRYER && creep.memory.pet != null);
-            let pets = [];
-            for (let c in carryers) {
-                let ca = carryers[c];
-                if (pets.includes(ca.memory.pet)) {
-                    console.log('removing duplicate: ' + ca.memory.pet)
-                    delete ca.memory.pet;
-                } else {
-                    pets.push(ca.memory.pet);
-                }
-            }
-
-            switch (Memory.init) {
-                case -1:
-                    break;
-                case 0:
-
-                    console.log('INIT: ' + Memory.init);
-                    break;
-                case 1:
-                    console.log('INIT: ' + Memory.init);
-                    break;
-                case 2:
-                    console.log('INIT: ' + Memory.init);
-                    break;
-                case 3:
-                    console.log('INIT: ' + Memory.init);
-                    break;
-                case 4:
-                    console.log('INIT: ' + Memory.init);
-                    break;
-                case 5:
-                    console.log('INIT: ' + Memory.init);
-                    break;
-                case 6:
-                    console.log('INIT: ' + Memory.init);
-                    break;
-                case 7:
-                    console.log('INIT: ' + Memory.init);
-                    break;
-                default:
-                    Memory.init = 0;
-            }
-            return;
+        Memory.creeps_count_by_action = {
+            miner: 0,
+            carry: 0,
+            upgrade: 0,
+            builder: 0,
+            lootcolector: 0,
+            repair: 0,
+            spawnhelper: 0
+        };
+        for (let it in Game.creeps) {
+            let creep = Game.creeps[it];
+            Memory.creeps_count_by_action[creep.memory.action] += 1;
         }
 
+
+        // let towers = spw.room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
+        // towers.forEach((tower) => {
+        //     if (!Memory.pets.includes(tower.id))
+        //         Memory.need_energy.push(tower.id);
+        // });
+
+        let carryers = _.filter(Game.creeps, (creep) => creep.memory.action === CARRYER && creep.memory.pet != null);
+        let pets = [];
+        for (let c in carryers) {
+            let ca = carryers[c];
+            if (pets.includes(ca.memory.pet)) {
+                console.log('removing duplicate: ' + ca.memory.pet)
+                delete ca.memory.pet;
+            } else {
+                pets.push(ca.memory.pet);
+            }
+        }
+
+        switch (Memory.init) {
+            case -1:
+                break;
+            case 0:
+
+                console.log('INIT: ' + Memory.init);
+                break;
+            case 1:
+                console.log('INIT: ' + Memory.init);
+                break;
+            case 2:
+                console.log('INIT: ' + Memory.init);
+                break;
+            case 3:
+                console.log('INIT: ' + Memory.init);
+                break;
+            case 4:
+                console.log('INIT: ' + Memory.init);
+                break;
+            case 5:
+                console.log('INIT: ' + Memory.init);
+                break;
+            case 6:
+                console.log('INIT: ' + Memory.init);
+                break;
+            case 7:
+                console.log('INIT: ' + Memory.init);
+                break;
+            default:
+                Memory.init = 0;
+        }
+        return;
+    },
+
+    Check: function (game, spw) {
         if (Memory.query.length > 0) {
             var c = Game.creeps[Memory.query.pop()];
             if (c) {
@@ -146,6 +155,12 @@ var spawnner = {
             Memory.creeps_count_by_action[UPGRADE] += 1;
         }
 
+        function SpawnSpawnHelper(energy) {
+            let name = spawn(SPAWNHELPER, [MOVE, CARRY, CARRY, MOVE]);
+            Memory.query.push(name);
+            Memory.creeps_count_by_action[SPAWNHELPER] += 1;
+        }
+
         function SpawnCarry(length, available) {
             let parts = [MOVE, MOVE, CARRY, CARRY];
             if (available >= 300) {
@@ -182,10 +197,11 @@ var spawnner = {
 
             let c_UPGRADE = Memory.creeps_count_by_action[UPGRADE];
             let c_MINER = Memory.creeps_count_by_action[MINER];
-            let c_CARRYER =  Memory.creeps_count_by_action[CARRYER];
+            let c_CARRYER = Memory.creeps_count_by_action[CARRYER] - 1;
             let c_REPAIR = Memory.creeps_count_by_action[REPAIR];
             let c_LOOTER = Memory.creeps_count_by_action[LOOTER];
             let c_BUILDER = Memory.creeps_count_by_action[BUILDER];
+            let c_SPAENHELPER = Memory.creeps_count_by_action[SPAWNHELPER];
             if (c_MINER < MINERS && c_MINER < c_CARRYER) {
                 SpawnMiner(energy);
                 return;
@@ -213,6 +229,9 @@ var spawnner = {
             }).length > 0)) {
                 spawn(LOOTER, [MOVE, CARRY, WORK]);
                 return;
+            }
+            if (c_SPAENHELPER < 1) {
+                SpawnSpawnHelper(energy);
             }
 
 

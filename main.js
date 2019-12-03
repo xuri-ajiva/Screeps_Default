@@ -6,6 +6,7 @@ const CARRYER = 'carry';
 const ARCHITECT = 'architect';
 const REPAIR = 'repair';
 const LOOTER = 'lootcolector';
+const SPAWNHELPER = 'spawnhelper';
 
 const RENEW = 'renew';
 
@@ -15,6 +16,7 @@ let upgrade = require(act + UPGRADE);
 let builder = require(act + BUILDER);
 let carry = require(act + CARRYER);
 let looter = require('special.' + LOOTER);
+let spawnhelper = require(act + SPAWNHELPER);
 
 let defend = require('defend');
 
@@ -52,9 +54,10 @@ module.exports.loop = function () {
             break;
         case 255:
             Memory._count = 0;
-            summoner.Check(Game, spw, true);
+            summoner.INIT(Game, spw);
             break;
         default:
+            //Memory._count = 255;
             Memory._count++;
             break;
     }
@@ -128,6 +131,9 @@ module.exports.loop = function () {
                     //     looter.recycle(creep, spw);
                     // else
                     looter.run(creep, spw);
+                    break;
+                case SPAWNHELPER:
+                    spawnhelper.run(creep, spw);
                     break;
                 default:
                     break;

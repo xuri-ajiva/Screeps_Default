@@ -16,16 +16,18 @@ let looter = {
                 });
 
 
-                if (ruin === undefined || ruin === null) {
+                if (ruin !== undefined) {
                     creep.memory.init = 3;
+                    break;
                 } else {
                     let ruin = spw.room.find(FIND_TOMBSTONES, {
                         filter: (structure) => {
-                            return structure.owner !== spw.owner;
+                            return structure.owner === spw.owner;
                         }
                     });
                     if (ruin === undefined || ruin === null) {
                         creep.memory.init = 3;
+                        return;
                     }
                 }
 

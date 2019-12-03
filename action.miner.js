@@ -15,14 +15,14 @@ let miner = {
             }
         }
 
-        switch (creep.memory.init) {
+        switch (creep.memory.count) {
             case  100:
                 switchsource();
-                creep.memory.init = -1000 - (creep.pos.findPathTo(Game.getObjectById(creep.memory.source)) + 10);
+                creep.memory.count = -1000 - (creep.pos.findPathTo(Game.getObjectById(creep.memory.source)) + 10);
                 break;
             case  -1000:
                 switchsource();
-                creep.memory.init = -(creep.pos.findPathTo(Game.getObjectById(creep.memory.source)) + 10);
+                creep.memory.count = -(creep.pos.findPathTo(Game.getObjectById(creep.memory.source)) + 10);
                 break;
             case  -1:
                 //delete Memory.need_energy[Memory.need_energy.findIndex(creep.memory.pet)];
@@ -31,13 +31,13 @@ let miner = {
                 }
                 return;
             case  undefined:
-                creep.memory.init = 0;
+                creep.memory.count = 0;
             default:
         }
 
         let source = Game.getObjectById(creep.memory.source);
         if (creep.harvest(source) === ERR_NOT_IN_RANGE) {
-            creep.memory.init++;
+            creep.memory.count++;
             creep.moveTo(source/*, {visualizePathStyle: {stroke: '#ffe600'}}*/);
         }
         //case OK:
@@ -56,7 +56,7 @@ let miner = {
         if (spw.recycleCreep(creep) === ERR_NOT_IN_RANGE) {
             creep.moveTo(spw);
         } else {
-            Memory.creeps_init_by_action[creep.action]--;
+            Memory.creeps_count_by_action[creep.action]--;
         }
     }
 };
