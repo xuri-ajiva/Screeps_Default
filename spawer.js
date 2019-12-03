@@ -156,7 +156,16 @@ var spawnner = {
         }
 
         function SpawnSpawnHelper(energy) {
-            let name = spawn(SPAWNHELPER, [MOVE, CARRY, CARRY, MOVE]);
+            let bo = [MOVE, CARRY, WORK];
+            if (energy >= 250)
+                bo.push(CARRY);
+            if (energy >= 300)
+                bo.push(MOVE);
+            if (energy >= 400)
+                bo.push(WORK);
+            if (energy >= 450)
+                bo.push(MOVE);
+            let name = spawn(SPAWNHELPER, bo);
             Memory.query.push(name);
             Memory.creeps_count_by_action[SPAWNHELPER] += 1;
         }
@@ -211,6 +220,10 @@ var spawnner = {
                 SpawnUpgrader(energy);
                 return;
             }
+            if (c_SPAENHELPER < 1) {
+                SpawnSpawnHelper(energy);
+                return;
+            }
             if (c_CARRYER < CARRYERS) {
                 SpawnCarry(c_CARRYER, energy);
                 return;
@@ -229,9 +242,6 @@ var spawnner = {
             }).length > 0)) {
                 spawn(LOOTER, [MOVE, CARRY, WORK]);
                 return;
-            }
-            if (c_SPAENHELPER < 1) {
-                SpawnSpawnHelper(energy);
             }
 
 

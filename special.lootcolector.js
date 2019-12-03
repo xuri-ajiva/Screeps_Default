@@ -16,7 +16,7 @@ let looter = {
                 });
 
 
-                if (ruin !== undefined) {
+                if (ruin === undefined) {
                     creep.memory.init = 3;
                     break;
                 } else {
@@ -31,7 +31,10 @@ let looter = {
                     }
                 }
 
-                creep.memory.target = ruin.id;
+                if (ruin)
+                    creep.memory.target = ruin.id;
+                else
+                    creep.memory.init = 3;
                 creep.memory.init = 2;
                 break;
             case 2:
