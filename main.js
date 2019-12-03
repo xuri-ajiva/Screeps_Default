@@ -7,6 +7,7 @@ const ARCHITECT = 'architect';
 const REPAIR = 'repair';
 const LOOTER = 'lootcolector';
 const SPAWNHELPER = 'spawnhelper';
+const ATTACK = 'attack';
 
 const RENEW = 'renew';
 
@@ -15,6 +16,7 @@ let miner = require(act + MINER);
 let upgrade = require(act + UPGRADE);
 let builder = require(act + BUILDER);
 let carry = require(act + CARRYER);
+let attack = require(act + ATTACK);
 let looter = require('special.' + LOOTER);
 let spawnhelper = require(act + SPAWNHELPER);
 
@@ -74,7 +76,7 @@ module.exports.loop = function () {
     ///Memory.Spw.spawnCreep([MOVE], '_test', {memory: {action: 'architect'}})
 
 
-    let co = {miner: 0, carry: 0, upgrade: 0, builder: 0, lootcolector: 0, repair: 0,spawnhelper:0};
+    let co = {miner: 0, carry: 0, upgrade: 0, builder: 0, lootcolector: 0, repair: 0,spawnhelper:0,attack:0};
 
     for (var c_name in Game.creeps) {
         var creep = Game.creeps[c_name];
@@ -135,6 +137,10 @@ module.exports.loop = function () {
                 case SPAWNHELPER:
                     spawnhelper.run(creep, spw);
                     break;
+                case ATTACK:
+                    //creep.suicide();
+                    attack.run(creep, spw);
+                    break;
                 default:
                     break;
             }
@@ -152,7 +158,7 @@ module.exports.loop = function () {
          log += i + ': ' + co[i] + "\n";
          Memory.stats.push(i + ': ' + co[i]);
      }
-     console.log(log+ Game.cpu.getUsed().toFixed(4));
+     //console.log(log+ Game.cpu.getUsed().toFixed(4));
      //if(Game.cpu.getUsed().toFixed(4) > 30){
      //    for (let x in Memory.stats){
      //        console.log(x + ': '+Memory.stats[x]+ "\n");

@@ -6,6 +6,7 @@ const ARCHITECT = 'architect';
 const REPAIR = 'repair';
 const LOOTER = 'lootcolector';
 const SPAWNHELPER = 'spawnhelper';
+const ATTACKE = 'attack';
 const CARRYERS = 17; //(+1)
 const MINERS = 7;
 const BUILDERS = 4;
@@ -31,7 +32,8 @@ var spawnner = {
             builder: 0,
             lootcolector: 0,
             repair: 0,
-            spawnhelper: 0
+            spawnhelper: 0,
+            attack: 0
         };
         for (let it in Game.creeps) {
             let creep = Game.creeps[it];
@@ -71,6 +73,7 @@ var spawnner = {
                 console.log('INIT: ' + Memory.init);
                 break;
             case 3:
+
                 console.log('INIT: ' + Memory.init);
                 break;
             case 4:
@@ -100,6 +103,8 @@ var spawnner = {
         }
         for (let name in Memory.creeps)
             if (!Game.creeps[name]) {
+                if(name.includes('attack'))
+                    Memory.creeps_count_by_action[ATTACKE] -= 1;
                 delete Memory.creeps[name];
                 console.log('✝: ' + name);
             }
@@ -137,8 +142,13 @@ var spawnner = {
             Memory.creeps_count_by_action[REPAIR] += 1;
         }
 
+        function SpawnAttack(energy) {
+           spawn(ATTACKE, [MOVE, MOVE, ATTACK, ATTACK]);
+            Memory.creeps_count_by_action[ATTACKE] += 1;
+        }
+
         function SpawnBuilder(energy) {
-            let name = spawn(BUILDER, [MOVE, CARRY, WORK, WORK]);
+            let name =  spawn(BUILDER, [MOVE, CARRY, WORK, WORK]);
 
             console.log("🔜: " + name);
             Memory.query.push(name);
@@ -211,6 +221,7 @@ var spawnner = {
             let c_LOOTER = Memory.creeps_count_by_action[LOOTER];
             let c_BUILDER = Memory.creeps_count_by_action[BUILDER];
             let c_SPAENHELPER = Memory.creeps_count_by_action[SPAWNHELPER];
+            let c_ATTACKER = Memory.creeps_count_by_action[ATTACKE];
             if (c_MINER < MINERS && c_MINER < c_CARRYER) {
                 SpawnMiner(energy);
                 return;
@@ -228,9 +239,15 @@ var spawnner = {
                 SpawnCarry(c_CARRYER, energy);
                 return;
             }
+            if (c_ATTACKER < 4 && c_ATTACKER < c_CARRYER) {
+                SpawnAttack(energy);
+                return;
+            }
             if (c_REPAIR < REPAIRS && c_REPAIR < c_CARRYER) {
                 SpawnRepair(energy);
+                return;
             }
+
             if (c_LOOTER < 1 && c_LOOTER < c_CARRYER && (spw.room.find(FIND_RUINS, {
                 filter: (structure) => {
                     return structure.store[RESOURCE_ENERGY] > 0;
