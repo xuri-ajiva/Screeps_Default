@@ -1,4 +1,4 @@
-const size = 12;
+const size = 9;
 const min = 5;
 const max = 50 - min;
 
@@ -16,8 +16,9 @@ module.exports = {
                     break;
                 case 1:
                     this.detectPos(creep, spw);
-                    break;
 
+                    Memory._extentions[0] = 2;
+                    break;
                 case 2:
                     let x = Memory._extentions[1]['x'];
                     let y = Memory._extentions[1]['y'];
@@ -41,15 +42,26 @@ module.exports = {
                     break;
                 case 3:
                     //for (let i = 0; i <= 2 + size; i++)
-                        this.build(creep, spw, true);
-
-                    Memory._extentions[0] = 2;
+                    this.build(creep, spw, false);
+                    Memory._extentions[0] = 4;
                     break;
                 case 4:
-                    // let t = creep.room.find(FIND_MY_CONSTRUCTION_SITES);
-                    //  for(const i in t){
-                    //      t[i].remove();
-                    //  }
+
+                    creep.say('☯');
+                    let carry = require('action.carry');
+
+                    if (creep.store.getFreeCapacity() !== 0) {
+                        if (carry.GetEnergy(creep, spw, true)) {
+
+                        }
+                    } else if(spw.room.energyAvailable < spw.room.energyCapacityAvailable) {
+                        let struct = spw.room.find(FIND_STRUCTURES,{filter: (s) => s.structureType === STRUCTURE_EXTENSION && s.store[RESOURCE_ENERGY] !== 50 })
+                        if(creep.transfer(struct[0],RESOURCE_ENERGY) === ERR_NOT_IN_RANGE){
+                            creep.moveTo(struct[0]);
+                        }
+
+                    }
+
                     break;
 
                 // default:
@@ -57,7 +69,10 @@ module.exports = {
                 //     break
             }
 
-
+            //let t = creep.room.find(FIND_MY_CONSTRUCTION_SITES);
+            //for (const i in t) {
+            //    t[i].remove();
+            //}
         } else {
             Memory._extentions = [];
             Memory._extentions.push(0);
@@ -65,14 +80,17 @@ module.exports = {
             Memory._extentions.push(0);
         }
     },
+
     /** @param {Creep} creep
      *  @param {Spawn} spw
      **/
     detectPos: function (creep, spw) {
         let t_size = size / 2;
+        let h_size = (size / 2);
         const terrain = spw.room.getTerrain();
         const matrix = new PathFinder.CostMatrix;
         const visual = spw.room.visual;
+        visual.text(' test ', 1, 0);
 
         let px = 0;
         let py = 0;
@@ -99,7 +117,7 @@ module.exports = {
                                     for (let j = y; j < y + size; j++) {
                                         if (terrain.get(i, j) === TERRAIN_MASK_WALL) {
                                             _break = true;
-                                            //visual.text('-', i, j);
+                                            visual.text('-', i, j);
                                         }
                                         //else {visual.text('#',i,j);}
                                     }
@@ -114,18 +132,30 @@ module.exports = {
                                     }
                                     //visual.text(dist_n.toFixed(0), (x+h_size), (y+h_size) );
 
-                                    if (dist_n.toFixed(0) == 10) {
-                                        Memory._extentions[1] = {x: x, y: y};
-                                        Memory._extentions[0] = 2;
+
+                                    if (dist_n.toFixed(0) == 7) {
+                                        Memory._extentions[1] = {x: px, y: py};
+                                        console.log('placing spawnHelp at [' + px + '/' + py + ']');
+
+                                        visual.rect(px, py, size, size, {
+                                            strokeWidth: .8,
+                                            fill: '#ffdb00',
+                                            stroke: '#000000'
+                                        });
+                                        visual.rect(px - 1, py - 1, size + 2, size + 2, {
+                                            strokeWidth: .5,
+                                            fill: 'transparent',
+                                            stroke: '#00ff1e'
+                                        });
 
                                         visual.text('x', px + size, py);
                                         visual.text('x', px + size, py + size);
                                         visual.text('x', px, py + size);
                                         visual.text('H' + px + ':' + py + ":" + dist_n.toFixed(0), px, py);
 
-                                        creep.say('💥');
+                                        //console.log('ret');
                                         return;
-                                    } else if (dist_n > 10 && dist_n < dist && dist_n < 20) {
+                                    } else if (dist_n > 7 && dist_n < dist && dist_n < 20) {
                                         dist = dist_n;
                                         px = x;
                                         py = y;
@@ -147,26 +177,25 @@ module.exports = {
     build: function (creep, spw, prew) {
 
         let h_size = (size / 2);
-        let q_size = Math.floor(size / 4);
+        let q_size = Math.floor(size / 3);
         let x = Memory._extentions[1]['x'];
         let y = Memory._extentions[1]['y'];
-
         //creep.say(q_size);
         //creep.moveTo(x, y);
         for (let i = x; i <= x + size; i++) {
             for (let j = y; j <= y + size; j++) {
 
                 if (i == x + size || j == y + size || i == x || j == y) {
-                    if (j == y + h_size || i == x + h_size) if (prew)
-                        spw.room.visual.text('🔸', i, j);
-                    else spw.room.createConstructionSite(i, j, STRUCTURE_ROAD);
+                    if (i === x + q_size || i === x + q_size * 2) if (prew)
+                        spw.room.visual.text('🟩', i, j);
+                    else spw.room.createConstructionSite(i, j, STRUCTURE_RAMPART);
                     else if (prew)
                         spw.room.visual.text('⬛', i, j);
                     else
                         spw.room.createConstructionSite(i, j, STRUCTURE_WALL);
                 } else {
 
-                    if (j === y + h_size || i === x + h_size /*|| j === y + q_size*/ || i === x + q_size /*|| j === y + q_size * 3*/ || i === x + q_size * 3)
+                    if (i === x + q_size || i === x + q_size * 2)
                         if (prew)
                             spw.room.visual.text('🔸', i, j);
                         else spw.room.createConstructionSite(i, j, STRUCTURE_ROAD);
@@ -191,41 +220,7 @@ module.exports = {
             spw.room.createConstructionSite(x + 1 + size, y - 1, STRUCTURE_CONTAINER);
             spw.room.createConstructionSite(x - 1, y + 1 + size, STRUCTURE_CONTAINER);
         }
+        spw.room.visual.text('🔰', x, y);
     },
 
-    /** @param {Creep} creep
-     *  @param {Spawn} spw
-     **/
-    prew: function (creep, spw) {
-        let h_size = (size / 2);
-        let q_size = Math.floor(size / 4);
-        let x = Memory._extentions[1]['x'];
-        let y = Memory._extentions[1]['y'];
-        //creep.say(q_size);
-        creep.moveTo(x, y);
-        for (let i = x; i <= x + size; i++) {
-            for (let j = y; j <= y + size; j++) {
-
-                if (i == x + size || j == y + size || i == x || j == y) {
-                    if (j == y + h_size || i == x + h_size)
-                        spw.room.visual.text('🔸', i, j);
-                    else
-                        spw.room.visual.text('⬛', i, j);
-                } else {
-
-                    if (j === y + h_size || i === x + h_size /*|| j === y + q_size*/ || i === x + q_size /*|| j === y + q_size * 3*/ || i === x + q_size * 3)
-                        spw.room.visual.text('🔸', i, j);
-                    else {
-                        spw.room.visual.text('🟡', i, j);
-                    }
-                }
-            }
-        }
-        spw.room.visual.text('🔲', x - 1, y - 1);
-        spw.room.visual.text('🔲', x + 1 + size, y + 1 + size);
-        spw.room.visual.text('🔲', x + 1 + size, y - 1);
-        spw.room.visual.text('🔲', x - 1, y + 1 + size);
-
-    }
-}
-;
+};

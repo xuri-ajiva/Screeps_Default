@@ -12,14 +12,14 @@ let renew = {
                 creep.memory.path_to_spawn = creep.pos.findPathTo(spw.pos).length;
                 break;
             case  1:
-                creep.say('⏩');
+                creep.say('⏩',true);
                 creep.memory.path_to_spawn--;
                 creep.moveTo(spw);
                 if (creep.memory.path_to_spawn === -3)
                     creep.memory.renew = 2;
                 break;
             case 2:
-                creep.say('✳');
+                creep.say('✳',true);
                 switch (spw.renewCreep(creep)) {
                     case ERR_NOT_IN_RANGE:
                         creep.moveTo(spw);

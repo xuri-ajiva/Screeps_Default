@@ -60,9 +60,9 @@ let architect = {
         // places.push({x: 2, y: -3});
         // places.push({x: -2, y: -3});
 
-        for (let p in places) {
-            spw.room.createConstructionSite(spw.pos.x + places[p].x, spw.pos.y + places[p].y, STRUCTURE_EXTENSION);
-        }
+        // for (let p in places) {
+        //     spw.room.createConstructionSite(spw.pos.x + places[p].x, spw.pos.y + places[p].y, STRUCTURE_EXTENSION);
+        // }
         places = [];
         for (let x = -2; x < 3; x++) {
             for (let y = -2; y < 3; y++) {
