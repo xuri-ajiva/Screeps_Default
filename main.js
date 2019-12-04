@@ -25,6 +25,9 @@ let defend = require('defend');
 let summoner = require('spawer');
 let renewer = require('special.' + RENEW);
 
+
+require('prototype.spawn')();
+
 module.exports.loop = function () {
 
 
@@ -96,6 +99,7 @@ module.exports.loop = function () {
             /*if(creep.store[RESOURCE_ENERGY] == 0)
                 creep.suicide();*/
             if (creep.memory.renew !== undefined) {
+                creep.suicide();
                 renewer.reNewCreep(creep, spw);
                 continue;
             }

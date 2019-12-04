@@ -109,7 +109,7 @@ var spawnner = {
     },
 
     Check: function (game, spw) {
-        if (Memory.query.length > 0) {
+        if (Memory.query && Memory.query.length > 0) {
             var c = Game.creeps[Memory.query.pop()];
             if (c) {
                 Memory.need_energy.push(c.id);
@@ -123,107 +123,6 @@ var spawnner = {
                 console.log('✝: ' + name);
             }
 
-
-        let spawn = function (obj, ls, adj) {
-            var newName = obj + Game.time;
-            if (adj) {
-                let memory = Object.assign({}, {action: obj}, adj);
-                console.log('*: ' + newName + ' =>' + spw.spawnCreep(ls, newName, {
-                    memory
-                }));
-            } else {
-                console.log('*: ' + newName + ' =>' + spw.spawnCreep(ls, newName, {memory: {action: obj}}));
-            }
-            return newName;
-        };
-
-        function SpawnMiner(energy) {
-            if (energy < 250) return;
-            spawn(MINER, [WORK, MOVE, WORK], {
-                source: spw.room.find(FIND_SOURCES)[parseInt(Math.random() * 1)].id,
-                count: 0
-            });
-            Memory.creeps_count_by_action[MINER] += 1;
-        }
-
-        function SpawnRepair(energy) {
-            if (energy < 400) return;
-            let name = spawn(REPAIR, [MOVE, CARRY, CARRY, CARRY, WORK, WORK],);
-
-            console.log("🔜: " + name);
-            Memory.query.push(name);
-
-            Memory.creeps_count_by_action[REPAIR] += 1;
-        }
-
-        function SpawnAttack(energy) {
-            spawn(ATTACKE, [MOVE, MOVE, ATTACK, ATTACK]);
-            Memory.creeps_count_by_action[ATTACKE] += 1;
-        }
-
-        function SpawnBuilder(energy) {
-            let name = spawn(BUILDER, [MOVE, CARRY, WORK, WORK]);
-
-            console.log("🔜: " + name);
-            Memory.query.push(name);
-
-            Memory.creeps_count_by_action[BUILDER] += 1;
-        }
-
-        function SpawnUpgrader(energy) {
-            let name = spawn(UPGRADE, [MOVE, CARRY, WORK]);
-
-            console.log("🔜: " + name);
-            Memory.query.push(name);
-
-            Memory.creeps_count_by_action[UPGRADE] += 1;
-        }
-
-        function SpawnSpawnHelper(energy) {
-            let bo = [MOVE, CARRY, CARRY, MOVE];
-            if (energy >= 250)
-                bo.push(CARRY);
-            if (energy >= 300)
-                bo.push(MOVE);
-            if (energy >= 400) {
-                bo.push(CARRY);
-                bo.push(MOVE);
-            }
-            if (energy >= 450)
-                bo.push(MOVE);
-            if(energy >= 600){
-                bo.push(MOVE);
-                bo.push(CARRY);
-                bo.push(MOVE);
-            }
-            let name = spawn(SPAWNHELPER, bo);
-            Memory.query.push(name);
-            Memory.creeps_count_by_action[SPAWNHELPER] += 1;
-        }
-
-        function SpawnCarry(length, available) {
-            let parts = [MOVE, MOVE, CARRY, CARRY];
-            if (available >= 300) {
-                if (length > 3) {
-                    parts.push(MOVE)
-                }
-                if (length > 9) {
-                    parts.push(CARRY)
-                }
-            } else if (available >= 400) {
-                parts.push(MOVE);
-                parts.push(MOVE);
-                parts.push(CARRY);
-                parts.push(CARRY);
-            }
-            if (Memory.need_energy === undefined)
-                Memory.need_energy = [];
-            spawn(CARRYER, parts, Memory.need_energy.length > 0 ? {pet: Memory.need_energy.shift()} : undefined);
-
-
-            Memory.creeps_count_by_action[CARRYER] += 1;
-        }
-
         let carryers = _.filter(Game.creeps, (creep) => creep.memory.action === CARRYER && creep.memory.pet != null);
         Memory.pets = _.map(carryers, function (s) {
             return s.memory.pet;
@@ -234,9 +133,9 @@ var spawnner = {
             //console.log(energy);
             //if (energy < 250) return;
             if (energy < 150) return;
-            spw.room.visual.text('⚡' + energy+'⚡',
-                spw.pos.x-.7, spw.pos.y,
-                {align: 'left', opacity: 1,color: '#ff00f5',font:.3});
+            spw.room.visual.text('⚡' + energy + '⚡',
+                spw.pos.x - .7, spw.pos.y,
+                {align: 'left', opacity: 1, color: '#ff00f5', font: .3});
 
             let c_UPGRADE = Memory.creeps_count_by_action[UPGRADE];
             let c_MINER = Memory.creeps_count_by_action[MINER];
@@ -246,33 +145,26 @@ var spawnner = {
             let c_BUILDER = Memory.creeps_count_by_action[BUILDER];
             let c_SPAENHELPER = Memory.creeps_count_by_action[SPAWNHELPER];
             let c_ATTACKER = Memory.creeps_count_by_action[ATTACKE];
-            if (c_MINER < MINERS && c_MINER < c_CARRYER) {
-                SpawnMiner(energy);
-                return;
-            }
-            if (energy < 200) return;
-            if (c_UPGRADE < UPGRADERS && c_UPGRADE < c_CARRYER - 1) {
-                SpawnUpgrader(energy);
-                return;
-            }
-            if (c_SPAENHELPER < SPAENHELPERS) {
-                SpawnSpawnHelper(energy);
-                return;
-            }
-            if (c_CARRYER < CARRYERS) {
-                SpawnCarry(c_CARRYER, energy);
-                return;
-            }
-            if (c_ATTACKER < 4 && c_ATTACKER < c_CARRYER) {
-                SpawnAttack(energy);
-                return;
-            }
-            if (c_REPAIR < REPAIRS && c_REPAIR < c_CARRYER) {
-                SpawnRepair(energy);
-                return;
-            }
 
-            if (c_LOOTER < 1 && c_LOOTER < c_CARRYER && (spw.room.find(FIND_RUINS, {
+            if (c_MINER < MINERS && c_MINER < c_CARRYER) {
+                let name = spw.SpawnCustomCreep(energy, MINER);
+                Memory.creeps_count_by_action[MINER] += 1;
+            } else if (c_UPGRADE < UPGRADERS && c_UPGRADE < c_CARRYER - 1) {
+                let name = spw.SpawnCustomCreep(energy, UPGRADE);
+                console.log("🔜: " + name);
+                Memory.query.push(name);
+                Memory.creeps_count_by_action[UPGRADE] += 1;
+            } else if (c_SPAENHELPER < SPAENHELPERS && c_SPAENHELPER < c_CARRYER - 1) {
+                let name = spw.SpawnCustomCreep(energy, SPAWNHELPER);
+                //Memory.query.push(name);
+                Memory.creeps_count_by_action[SPAWNHELPER] += 1;
+            } else if (c_CARRYER < CARRYERS) {
+                spw.SpawnCustomCreep(energy, CARRYER, Memory.need_energy.length > 0 ? {pet: Memory.need_energy.shift()} : undefined);
+                Memory.creeps_count_by_action[CARRYER] += 1;
+            } else if (c_ATTACKER < 4 && c_ATTACKER < c_CARRYER) {
+                spw.SpawnCustomCreep(energy, ATTACKE);
+                Memory.creeps_count_by_action[ATTACKE] += 1;
+            } else if (c_LOOTER < 1 && c_LOOTER < c_CARRYER && (spw.room.find(FIND_RUINS, {
                 filter: (structure) => {
                     return structure.store[RESOURCE_ENERGY] > 0;
                 }
@@ -281,16 +173,19 @@ var spawnner = {
                     return structure.ticksToDecay > 30;
                 }
             }).length > 0)) {
-                spawn(LOOTER, [MOVE, CARRY, WORK]);
-                return;
+                spw.SpawnCustomCreep(energy, LOOTER);
+            } else if (spw.room.find(FIND_CONSTRUCTION_SITES).length > 0 && c_BUILDER < BUILDERS) {
+                let name = spw.SpawnCustomCreep(energy, BUILDER);
+                console.log("🔜: " + name);
+                Memory.query.push(name);
+                Memory.creeps_count_by_action[BUILDER] += 1;
+            } else if (c_REPAIR < REPAIRS && c_REPAIR < c_CARRYER) {
+                let name = spw.SpawnCustomCreep(energy, REPAIR);
+                console.log("🔜: " + name);
+                Memory.query.push(name);
+                Memory.creeps_count_by_action[REPAIR] += 1;
             }
 
-
-            if (energy < 300) return;
-            if (spw.room.find(FIND_CONSTRUCTION_SITES).length > 0 && c_BUILDER < BUILDERS) {
-                SpawnBuilder(energy);
-                return;
-            }
         } else {
             spw.room.visual.text('🛠️' + Game.creeps[spw.spawning.name].memory.action,
                 spw.pos.x + 1, spw.pos.y,

@@ -9,15 +9,22 @@ const SPAWNHELPER = 'spawnhelper';
 const ATTACKE = 'attack';
 
 module.exports = function () {
-    StructureSpawn.prototype.SpawnCustomCreep = function (energy, action, Memory) {
+    StructureSpawn.prototype.SpawnCustomCreep = function (energy, action, _Memory) {
         let newName = action + Game.time;
         let body = CreateBody(energy, action);
-        if (Memory) {
-            let memory = Object.assign({}, {action: action}, Memory);
-            console.log('*: ' + newName + ' =>' + this.spawnCreep(body, newName, {memory}));
+        if (_Memory) {
+            let memory = Object.assign({}, {action: action}, _Memory);
+            console.log('*: ' + newName + ' =>' + this.spawnCreep(body, newName, {
+                memory
+            }));
+            //let str = JSON.stringify(memory, null, 4); // (Optional) beautiful indented output.
+            //console.log(str); // Logs output to dev tools console.
         } else {
-            console.log('*: ' + newName + ' =>' + this.spawnCreep(body, newName, {memory: {action: action}}));
+            //let str = JSON.stringify(body, null, 4); // (Optional) beautiful indented output.
+            //console.log(str); // Logs output to dev tools console.
+            console.log('* -: ' + newName + ' =>' + this.spawnCreep(body, newName, {memory: {action: action}}));
         }
+        console.log('Spawning: ' + newName);
         return newName;
     };
     /**
@@ -72,13 +79,15 @@ module.exports = function () {
      * **/
 
     let global = function (energy, bodyS) {
-        let final = [];
-        let parts = 0;
-        for (let s in bodyS) {
-            parts += bodyS[s]['e'];
-        }
-        parts = Math.floor(energy / parts); //parts <- body parts all cost
 
+        let final = [];
+        let cost = 0;
+        for (let s in bodyS) {
+            cost += bodyS[s]['e'];
+        }
+
+        let parts = (energy / cost); //parts <- body parts all cost
+        if (cost > energy) return;
         for (let s in bodyS) {
             for (let i = 0; i < parts; i++) {
                 final.push(bodyS[s]['b']);
