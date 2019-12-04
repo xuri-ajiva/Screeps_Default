@@ -10,7 +10,7 @@ module.exports = {
             creep.say('💢');
             creep.moveTo(enemy);
         }}
-        else{creep.moveTo(spw.pos.x + 7,spw.pos.y - 8);}
+        else{creep.moveTo(spw.pos.x - 7,spw.pos.y + 8);}
 
     }
 };

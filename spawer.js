@@ -65,7 +65,8 @@ var spawnner = {
             let s = require('action.' + SPAWNHELPER);
             s.Build(undefined, spw, false, ++Memory._extentions[2], Memory._extentions[2]);
             if (Memory._extentions[2] > 16) {
-                Memory._extentions[2] = 0;
+                Memory._extentions[2] = -1;
+            } else if (Memory._extentions[2] === 0) {
                 Memory._extentions[0] = 5;
             }
             //console.log(Game.cpu.getUsed() - cpu + ' '+Memory._extentions[2]);
@@ -233,6 +234,9 @@ var spawnner = {
             //console.log(energy);
             //if (energy < 250) return;
             if (energy < 150) return;
+            spw.room.visual.text('⚡' + energy+'⚡',
+                spw.pos.x-.7, spw.pos.y,
+                {align: 'left', opacity: 1,color: '#ff00f5',font:.3});
 
             let c_UPGRADE = Memory.creeps_count_by_action[UPGRADE];
             let c_MINER = Memory.creeps_count_by_action[MINER];

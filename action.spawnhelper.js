@@ -57,7 +57,7 @@ module.exports = {
                             //    }
                             //}
                             let _t = Game.getObjectById(creep.memory.target['struct']);
-                            creep.say(_t.pos.x + '|' + _t.pos.y);
+                            //creep.say(_t.pos.x + '|' + _t.pos.y);
 
                             switch (creep.transfer(_t, RESOURCE_ENERGY)) {
                                 case ERR_NOT_IN_RANGE:

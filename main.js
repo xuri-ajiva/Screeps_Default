@@ -26,6 +26,14 @@ let summoner = require('spawer');
 let renewer = require('special.' + RENEW);
 
 module.exports.loop = function () {
+
+
+    //let s = require('action.' + SPAWNHELPER);
+    //s.detectPos(undefined, Game.spawns['Spawn1']);
+    //let t = Game.spawns['Spawn1'].room.find(FIND_MY_CONSTRUCTION_SITES);
+    //for (const i in t) {
+    //    t[i].remove();
+    //}
     Memory.stats = [];
     Memory.stats.push("0: " + Game.cpu.getUsed().toFixed(4));
     let c_this = Game.cpu.getUsed();

@@ -8,8 +8,9 @@ let miner = {
             if (find_sources.length > 1) {
                 for (let s in find_sources) {
                     if (find_sources[s].id !== creep.memory.source) {
-                        console.log(creep.memory.source + ' -> ' + find_sources[s].id);
+                        console.log(creep.name +': ' +creep.memory.source + ' -> ' + find_sources[s].id);
                         creep.memory.source = find_sources[s].id;
+                        return;
                     }
                 }
             }
@@ -18,17 +19,7 @@ let miner = {
         switch (creep.memory.count) {
             case  100:
                 switchsource();
-                creep.memory.count = -1000 - (creep.pos.findPathTo(Game.getObjectById(creep.memory.source)) + 10);
-                break;
-            case  -1000:
-                switchsource();
-                creep.memory.count = -(creep.pos.findPathTo(Game.getObjectById(creep.memory.source)) + 10);
-                break;
-            case  -1:
-                //delete Memory.need_energy[Memory.need_energy.findIndex(creep.memory.pet)];
-                if (spw.recycleCreep(creep) === ERR_NOT_IN_RANGE) {
-                    creep.moveTo(spw);
-                }
+                creep.memory.count =100- (creep.pos.findPathTo(Game.getObjectById(creep.memory.source)) + 30) ;
                 return;
             case  undefined:
                 creep.memory.count = 0;
