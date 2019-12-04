@@ -7,7 +7,7 @@ let renew = {
     reNewCreep(creep, spw) {
         switch (creep.memory.renew) {
             case 0:
-                creep.memory._beg = creep.ticksToLive;
+                //creep.memory._beg = creep.ticksToLive;
                 creep.memory.renew = 1;
                 creep.memory.path_to_spawn = creep.pos.findPathTo(spw.pos).length;
                 break;
@@ -29,6 +29,10 @@ let renew = {
                         break;
                     case  ERR_BUSY:
                         creep.moveTo(spw.pos.x - 5, spw.pos.y + 5);
+                    case ERR_NOT_ENOUGH_ENERGY:
+                        if(creep.store[RESOURCE_ENERGY] > 0)
+                            creep.transfer(spw,RESOURCE_ENERGY);
+                        break;
                     default:
                         break;
                 }

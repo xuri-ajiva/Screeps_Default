@@ -13,9 +13,10 @@ let upgrade = {
                 creep.moveTo(construct.pos.x - 3, construct.pos.y + 1);
             }
         } else {
-            console.log("Resycle");
             if (spw.recycleCreep(creep) === ERR_NOT_IN_RANGE) {
                 creep.moveTo(spw);
+            }else{
+                console.log("resycle: " + creep.name);
             }
         }
     },

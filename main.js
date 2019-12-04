@@ -76,7 +76,7 @@ module.exports.loop = function () {
     ///Memory.Spw.spawnCreep([MOVE], '_test', {memory: {action: 'architect'}})
 
 
-    let co = {miner: 0, carry: 0, upgrade: 0, builder: 0, lootcolector: 0, repair: 0,spawnhelper:0,attack:0};
+    let co = {miner: 0, carry: 0, upgrade: 0, builder: 0, lootcolector: 0, repair: 0, spawnhelper: 0, attack: 0};
 
     for (var c_name in Game.creeps) {
         var creep = Game.creeps[c_name];
@@ -153,17 +153,17 @@ module.exports.loop = function () {
         }
     }
 
-     let log = '';
-     for (let i in co) {
-         log += i + ': ' + co[i] + "\n";
-         Memory.stats.push(i + ': ' + co[i]);
-     }
-     //console.log(log+ Game.cpu.getUsed().toFixed(4));
-     //if(Game.cpu.getUsed().toFixed(4) > 30){
-     //    for (let x in Memory.stats){
-     //        console.log(x + ': '+Memory.stats[x]+ "\n");
-     //    }
-     //}
+    let log = '';
+    for (let i in co) {
+        log += i + ': ' + co[i] + "\n";
+        Memory.stats.push(i + ': ' + co[i]);
+    }
+    //console.log(log+ Game.cpu.getUsed().toFixed(4));
+    //if(Game.cpu.getUsed().toFixed(4) > 30){
+    //    for (let x in Memory.stats){
+    //        console.log(x + ': '+Memory.stats[x]+ "\n");
+    //    }
+    //}
 
     Memory.stats.push("end: " + Game.cpu.getUsed().toFixed(4));
 };

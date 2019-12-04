@@ -135,7 +135,7 @@ let carry = {
             let structures = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: (structure) => {
                     return ((structure.structureType == STRUCTURE_TOWER || structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 500)
-                        || ((structure.structureType == STRUCTURE_SPAWN || structure.structureType == STRUCTURE_EXTENSION) && structure.store.getFreeCapacity(RESOURCE_ENERGY) >= 50);
+                        || ((structure.structureType == STRUCTURE_SPAWN/* || structure.structureType == STRUCTURE_EXTENSION*/) && structure.store.getFreeCapacity(RESOURCE_ENERGY) >= 50);
                 }
             });
             if (structures !== undefined && structures != null) {

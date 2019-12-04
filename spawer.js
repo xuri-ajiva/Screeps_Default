@@ -12,6 +12,7 @@ const MINERS = 7;
 const BUILDERS = 4;
 const UPGRADERS = 4;
 const REPAIRS = 4;
+const SPAENHELPERS = 2;
 
 var spawnner = {
     INIT: function (Game, spw) {
@@ -52,18 +53,30 @@ var spawnner = {
         for (let c in carryers) {
             let ca = carryers[c];
             if (pets.includes(ca.memory.pet)) {
-                console.log('removing duplicate: ' + ca.memory.pet)
+                console.log('removing duplicate: ' + ca.memory.pet);
                 delete ca.memory.pet;
             } else {
                 pets.push(ca.memory.pet);
             }
         }
 
+        if (Memory._extentions && Memory._extentions[0] === 4) {
+            //let cpu = Game.cpu.getUsed();
+            let s = require('action.' + SPAWNHELPER);
+            s.Build(undefined, spw, false, ++Memory._extentions[2], Memory._extentions[2]);
+            if (Memory._extentions[2] > 16) {
+                Memory._extentions[2] = 0;
+                Memory._extentions[0] = 5;
+            }
+            //console.log(Game.cpu.getUsed() - cpu + ' '+Memory._extentions[2]);
+        }
+
         switch (Memory.init) {
             case -1:
                 break;
             case 0:
-
+                let s = require('action.' + SPAWNHELPER);
+                s.detectPos(undefined, spw);
                 console.log('INIT: ' + Memory.init);
                 break;
             case 1:
@@ -103,7 +116,7 @@ var spawnner = {
         }
         for (let name in Memory.creeps)
             if (!Game.creeps[name]) {
-                if(name.includes('attack'))
+                if (name.includes('attack'))
                     Memory.creeps_count_by_action[ATTACKE] -= 1;
                 delete Memory.creeps[name];
                 console.log('✝: ' + name);
@@ -143,12 +156,12 @@ var spawnner = {
         }
 
         function SpawnAttack(energy) {
-           spawn(ATTACKE, [MOVE, MOVE, ATTACK, ATTACK]);
+            spawn(ATTACKE, [MOVE, MOVE, ATTACK, ATTACK]);
             Memory.creeps_count_by_action[ATTACKE] += 1;
         }
 
         function SpawnBuilder(energy) {
-            let name =  spawn(BUILDER, [MOVE, CARRY, WORK, WORK]);
+            let name = spawn(BUILDER, [MOVE, CARRY, WORK, WORK]);
 
             console.log("🔜: " + name);
             Memory.query.push(name);
@@ -166,15 +179,22 @@ var spawnner = {
         }
 
         function SpawnSpawnHelper(energy) {
-            let bo = [MOVE, CARRY, WORK];
+            let bo = [MOVE, CARRY, CARRY, MOVE];
             if (energy >= 250)
                 bo.push(CARRY);
             if (energy >= 300)
                 bo.push(MOVE);
-            if (energy >= 400)
-                bo.push(WORK);
+            if (energy >= 400) {
+                bo.push(CARRY);
+                bo.push(MOVE);
+            }
             if (energy >= 450)
                 bo.push(MOVE);
+            if(energy >= 600){
+                bo.push(MOVE);
+                bo.push(CARRY);
+                bo.push(MOVE);
+            }
             let name = spawn(SPAWNHELPER, bo);
             Memory.query.push(name);
             Memory.creeps_count_by_action[SPAWNHELPER] += 1;
@@ -231,7 +251,7 @@ var spawnner = {
                 SpawnUpgrader(energy);
                 return;
             }
-            if (c_SPAENHELPER < 1) {
+            if (c_SPAENHELPER < SPAENHELPERS) {
                 SpawnSpawnHelper(energy);
                 return;
             }
