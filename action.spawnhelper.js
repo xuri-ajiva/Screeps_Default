@@ -61,6 +61,7 @@ module.exports = {
 
                             switch (creep.transfer(_t, RESOURCE_ENERGY)) {
                                 case ERR_NOT_IN_RANGE:
+                                    creep.room.visual.text('⭕',_t.pos.x,_t.pos.y);
                                     creep.moveTo(_t);
                                     break;
                                 case ERR_FULL:
@@ -78,13 +79,29 @@ module.exports = {
                     break;
 
                 case 10:
-                    //creep.say('🔀');
+                    creep.say('🔀');
                     creep.memory.targets = [];
-                    let structs = spw.room.find(FIND_STRUCTURES, {filter: (s) => s.structureType === STRUCTURE_EXTENSION && s.store.getFreeCapacity(RESOURCE_ENERGY) > 0});
-                    _.sortBy(structs, s => creep.pos.getRangeTo(s));
-                    for (let s in structs) {
-                        creep.memory.targets.push({struct: structs[s].id, energy: structs[s].store[RESOURCE_ENERGY]})
+                    let structs = spw.room.find(FIND_STRUCTURES);
+                    structs.sort((a, b) =>( a.pos.x - b.pos.x)/* * (a.pos.y - b.pos.y)*/);
+                    //_.sortBy(structs, s => creep.pos.getRangeTo(s));
+
+                    let x = 0;
+                    for (let s in  structs){
+                        let struct = structs[s];
+
+                        if(struct.structureType === STRUCTURE_EXTENSION){
+                            creep.room.visual.text(''+(x++),struct.pos.x,struct.pos.y ,{font: 0.2});
+                            creep.memory.targets.push({struct: struct.id, energy: struct.store[RESOURCE_ENERGY]});
+                        }
                     }
+
+
+
+                    //let structs = spw.room.find(FIND_STRUCTURES, {filter: (s) => s.structureType === STRUCTURE_EXTENSION && s.store.getFreeCapacity(RESOURCE_ENERGY) > 0});
+                    //_.sortBy(structs, s => creep.pos.getRangeTo(s));
+                    //for (let s in structs) {
+                    //    creep.memory.targets.push({struct: structs[s].id, energy: structs[s].store[RESOURCE_ENERGY]})
+                    //}
                     creep.memory.init = 1;
                     break;
 
@@ -92,7 +109,6 @@ module.exports = {
                     break;
             }
         else {
-
             if (Memory._extentions !== undefined) {
                 switch (Memory._extentions[0]) {
                     case 0:
@@ -162,6 +178,8 @@ module.exports = {
      *  @param {Spawn} spw
      **/
     detectPos: function (creep, spw) {
+        const iGameDistCheck = false;
+
         let t_size = size / 2;
         let h_size = (size / 2);
         const terrain = spw.room.getTerrain();
@@ -177,20 +195,18 @@ module.exports = {
         for (let y = min; y < max; y++) {
             for (let x = min; x < max; x++) {
                 const tile = terrain.get(x, y);
-                const weight =
-                    tile === TERRAIN_MASK_WALL ? 255 : // wall  => unwalkable
-                        tile === TERRAIN_MASK_SWAMP ? 5 : // swamp => weight:  5
-                            1; // plain => weight:  1
+                //const weight = tile === TERRAIN_MASK_WALL ? 255 : tile === TERRAIN_MASK_SWAMP ? 5 : 1;
                 //console.log(weight);
 
                 if (tile !== TERRAIN_MASK_WALL && x + size < max && y + size < max) {
-
-                    if (terrain.get(x + size, y) !== TERRAIN_MASK_WALL)
-                        if (terrain.get(x + size, y + size) !== TERRAIN_MASK_WALL)
-                            if (terrain.get(x, y + size) !== TERRAIN_MASK_WALL) {
+                    if (terrain.get(x + size - 1, y) !== TERRAIN_MASK_WALL)
+                        if (terrain.get(x + size - 1, y + size - 1) !== TERRAIN_MASK_WALL)
+                            if (terrain.get(x, y + size - 1) !== TERRAIN_MASK_WALL) {
                                 let _break = false;
-                                for (let i = x; i < x + size; i++) {
-                                    for (let j = y; j < y + size; j++) {
+                                for (let i = x; i < x + size + 1; i++) {
+                                    for (let j = y; j < y + size + 1; j++) {
+                                        if (i === x && j === y) {
+                                        }//visual.text(x+' | '+y, i, j, {font: 0.2});
                                         if (terrain.get(i, j) === TERRAIN_MASK_WALL) {
                                             _break = true;
                                             visual.text('-', i, j);
@@ -200,18 +216,32 @@ module.exports = {
                                     if (_break) break;
                                 }
                                 if (!_break) {
-                                    let dist_n = Math.sqrt(Math.pow(spw.pos.y - (y + t_size), 2) + Math.pow((spw.pos.x - (x + t_size)), 2));
+                                    //console.log('range: ' + spw.pos.getRangeTo(x + t_size, y + t_size) + '   my: ' + Math.sqrt(Math.pow(spw.pos.y - (y + t_size), 2) + Math.pow((spw.pos.x - (x + t_size)), 2)));
+
+                                    let dist_n = iGameDistCheck ? spw.pos.getRangeTo(x + t_size, y + t_size) : Math.sqrt(Math.pow(spw.pos.y - (y + t_size), 2) + Math.pow((spw.pos.x - (x + t_size)), 2));
                                     let s = spw.room.find(FIND_SOURCES);
                                     for (let t in s) {
-                                        let dts = Math.sqrt(Math.pow(s[t].pos.y - (y + t_size), 2) + Math.pow((s[t].pos.x - (x + t_size)), 2));
+                                        let dts = iGameDistCheck ? s[t].pos.getRangeTo(x + t_size, y + t_size) : Math.sqrt(Math.pow(s[t].pos.y - (y + t_size), 2) + Math.pow((s[t].pos.x - (x + t_size)), 2));
                                         dist_n = dts < dist_n ? dts : dist_n;
                                     }
+                                    let sm = spw.room.find(FIND_MINERALS);
+                                    for (let g in sm) {
+                                        let dts2 = iGameDistCheck ? sm[g].pos.getRangeTo(x + t_size, y + t_size) : Math.sqrt(Math.pow(sm[g].pos.y - (y + t_size), 2) + Math.pow((sm[g].pos.x - (x + t_size)), 2));
+                                        dist_n = dts2 < dist_n ? dts2 : dist_n;
+                                    }
+                                    let dist_2 = iGameDistCheck ? spw.room.controller.pos.getRangeTo(x + t_size, y + t_size) : Math.sqrt(Math.pow(spw.room.controller.y - (y + t_size), 2) + Math.pow((spw.room.controller.x - (x + t_size)), 2));
+                                    dist_n = dist_2 < dist_n ? dist_2 : dist_n;
+
                                     //visual.text(dist_n.toFixed(0), (x+h_size), (y+h_size) );
 
+                                    //visual.rect(px, py, size, size, {
+                                    //    strokeWidth: .1,
+                                    //    fill: 'transparent',
+                                    //    stroke: '#000000'
+                                    //});
 
                                     if (dist_n.toFixed(0) == 8) {
                                         Memory._extentions[1] = {x: px, y: py};
-                                        console.log('placing spawnHelp at [' + px + '/' + py + ']');
 
                                         visual.rect(px, py, size, size, {
                                             strokeWidth: .8,
@@ -230,18 +260,33 @@ module.exports = {
                                         visual.text('H' + px + ':' + py + ":" + dist_n.toFixed(0), px, py);
 
                                         //console.log('ret');
+
+                                        console.log('placing spawnHelp at [' + px + '/' + py + ']');
                                         return;
-                                    } else if (dist_n > 8 && dist_n < dist && dist_n < 20) {
+                                    }
+                                    if (dist_n > 8 && dist_n < dist && dist_n < 18) {
+                                        Memory._extentions[1] = {x: px, y: py};
                                         dist = dist_n;
                                         px = x;
                                         py = y;
+
+                                        //visual.rect(px, py, size, size, {
+                                        //    strokeWidth: .8,
+                                        //    fill: '#ffdb00',
+                                        //    stroke: '#000000'
+                                        //});
+                                        //visual.rect(px - 1, py - 1, size + 2, size + 2, {
+                                        //    strokeWidth: .5,
+                                        //    fill: 'transparent',
+                                        //    stroke: '#00ff1e'
+                                        //});
                                     }
                                 }
 
                             }
                 }
 
-                matrix.set(x, y, weight);
+                //matrix.set(x, y, weight);
             }
         }
     },
@@ -256,10 +301,10 @@ module.exports = {
 
         if (x_start !== undefined) {
             _start = x_start;
-            if(_start > size)return;
+            if (_start > size) return;
         }
         if (x_stop !== undefined) {
-            _stop = x_stop  > size ? size:x_stop;
+            _stop = x_stop > size ? size : x_stop;
         }
 
         let h_size = (size / 2);
