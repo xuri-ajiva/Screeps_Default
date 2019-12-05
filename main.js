@@ -7,7 +7,8 @@ const ARCHITECT = 'architect';
 const REPAIR = 'repair';
 const LOOTER = 'lootcolector';
 const SPAWNHELPER = 'spawnhelper';
-const ATTACK = 'attack';
+const ATTACKE = 'attack';
+const CTF = 'ctf';
 
 const RENEW = 'renew';
 
@@ -16,7 +17,7 @@ let miner = require(act + MINER);
 let upgrade = require(act + UPGRADE);
 let builder = require(act + BUILDER);
 let carry = require(act + CARRYER);
-let attack = require(act + ATTACK);
+let attack = require(act + ATTACKE);
 let looter = require('special.' + LOOTER);
 let spawnhelper = require(act + SPAWNHELPER);
 
@@ -25,6 +26,7 @@ let defend = require('defend');
 let summoner = require('spawer');
 let renewer = require('special.' + RENEW);
 
+let ctf = require('CaptureTheFlag');
 
 require('prototype.spawn')();
 
@@ -67,7 +69,7 @@ module.exports.loop = function () {
             break;
         case 255:
             Memory._count = 0;
-            summoner.INIT(Game, spw);
+            summoner.Init(Game, spw);
             break;
         default:
             //Memory._count = 255;
@@ -75,20 +77,37 @@ module.exports.loop = function () {
             break;
     }
 
+    //for (let x in Game.flags) {
+    //    ctf.setPath(Game.flags[x], spw);
+    //}
+
     Memory.stats.push('_count: ' + (Game.cpu.getUsed() - c_this).toFixed(4));
 
     c_this = Game.cpu.getUsed();
     summoner.Check(Game, spw);
 
     Memory.stats.push('spawner: ' + (Game.cpu.getUsed() - c_this).toFixed(4));
-
+    //let s = require('action.' + SPAWNHELPER);
+    //s.detectPos(undefined, spw);
+    //s.Build(undefined, spw, true);
     ///Main Select
 
-    ///Memory.Spw.spawnCreep([MOVE], '_test', {memory: {action: 'architect'}})
+    ///Game.spawns['Spawn1'].spawnCreep([MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,ATTACK,CARRY], '_test', {memory: {action: 'ctf'}})
 
 
-    let co = {miner: 0, carry: 0, upgrade: 0, builder: 0, lootcolector: 0, repair: 0, spawnhelper: 0, attack: 0};
-
+    let co = {
+        miner: [0, 0],
+        carry: [0, 0],
+        upgrade: [0, 0],
+        builder: [0, 0],
+        lootcolector: [0, 0],
+        repair: [0, 0],
+        spawnhelper: [0, 0],
+        attack: [0, 0],
+        ctf: [0, 0]
+    };
+    let s_this = Game.cpu.getUsed();
+    let vs = spw.room.visual;
     for (var c_name in Game.creeps) {
         var creep = Game.creeps[c_name];
         //creep.suicide();
@@ -98,79 +117,75 @@ module.exports.loop = function () {
             c_this = Game.cpu.getUsed();
             /*if(creep.store[RESOURCE_ENERGY] == 0)
                 creep.suicide();*/
+
             if (creep.memory.renew !== undefined) {
-                creep.suicide();
+                //creep.suicide();
                 renewer.reNewCreep(creep, spw);
+                if (vs) vs.text('🔋', creep.pos);
                 continue;
             }
             if (creep.ticksToLive < 100) {
+                if (vs) vs.text('🔋', creep.pos);
                 renewer.reNewCreep(creep, spw);
                 //console.log('renew: ' + creep.name);
                 continue;
             }
             switch (creep.memory.action) {
                 case MINER:
-                    // if (creep.ticksToLive < 50)
-                    //     miner.recycle(creep, spw);
-                    // else
                     miner.run(creep, spw);
+                    if (vs) vs.text('⛏', creep.pos);
                     break;
                 case UPGRADE:
-                    // if (creep.ticksToLive < 50)
-                    //     upgrade.recycle(creep, spw);
-                    // else
                     upgrade.run(creep, spw);
+                    if (vs) vs.text('🔧', creep.pos);
                     break;
                 case BUILDER:
-                    // if (creep.ticksToLive < 50)
-                    //     builder.recycle(creep, spw);
-                    // else
                     builder.run(creep, spw);
+                    if (vs) vs.text('⛑', creep.pos);
                     break;
                 case CARRYER:
-                    //creep.suicide();
-                    // if (creep.ticksToLive < 50)
-                    //     carry.recycle(creep, spw);
-                    // else
                     carry.run(creep, spw);
+                    if (vs) vs.text('🧰', creep.pos);
                     break;
                 case REPAIR:
-                    // if (creep.ticksToLive < 200)
-                    //     repair.recycle(creep, spw);
-                    // else
                     repair.run(creep, spw);
+                    if (vs) vs.text('🩹', creep.pos);
                     break;
                 case LOOTER:
-                    // if (creep.ticksToLive < 200)
-                    //     looter.recycle(creep, spw);
-                    // else
                     looter.run(creep, spw);
+                    if (vs) vs.text('🎁', creep.pos);
                     break;
                 case SPAWNHELPER:
                     spawnhelper.run(creep, spw);
+                    if (vs) vs.text('🧬', creep.pos);
                     break;
-                case ATTACK:
+                case ATTACKE:
                     //creep.suicide();
                     attack.run(creep, spw);
+                    if (vs) vs.text('🧨', creep.pos);
+                    break;
+                case CTF:
+                    ctf.move(creep);
                     break;
                 default:
                     break;
             }
-
-            if (co[creep.memory.action] < (Game.cpu.getUsed() - c_this).toFixed(4)) {
+            co[creep.memory.action][1]++;
+            if (co[creep.memory.action][0] < (Game.cpu.getUsed() - c_this).toFixed(4)) {
                 //console.log(creep.name);
-                co[creep.memory.action] = (Game.cpu.getUsed() - c_this).toFixed(4);
+                co[creep.memory.action][0] = (Game.cpu.getUsed() - c_this).toFixed(4);
             }
-            Memory.stats.push(creep.memory.action + ': ' + (Game.cpu.getUsed() - c_this).toFixed(4));
+            //Memory.stats.push(creep.memory.action + ': ' + (Game.cpu.getUsed() - c_this).toFixed(2));
         }
     }
+    Memory.stats.push('creeps: ' + (Game.cpu.getUsed() - s_this).toFixed(4));
 
     let log = '';
     for (let i in co) {
-        log += i + ': ' + co[i] + "\n";
-        Memory.stats.push(i + ': ' + co[i]);
+        log += '|' + co[i][1] + '| ' + ((2 - ('' + co[i][1]).length) === 1 ? ' ' : '') + i + ': ' + co[i][0] + "\n";
+        //Memory.stats.push(i + ': ' + co[i]);
     }
-    //console.log(log+ Game.cpu.getUsed().toFixed(4));
+    //console.log(log + Game.cpu.getUsed().toFixed(4));
     //if(Game.cpu.getUsed().toFixed(4) > 30){
     //    for (let x in Memory.stats){
     //        console.log(x + ': '+Memory.stats[x]+ "\n");

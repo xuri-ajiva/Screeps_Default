@@ -14,8 +14,8 @@ const UPGRADERS = 4;
 const REPAIRS = 4;
 const SPAENHELPERS = 2;
 
-var spawnner = {
-    INIT: function (Game, spw) {
+let spawner = {
+    Init: function (Game, spw) {
         // Memory.VIP = [];
         // let towers = room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
         // towers.forEach(tower => Memory.VIP.push(tower.id));
@@ -40,6 +40,7 @@ var spawnner = {
             let creep = Game.creeps[it];
             Memory.creeps_count_by_action[creep.memory.action] += 1;
         }
+        console.log(Memory.creeps_count_by_action[SPAWNHELPER]);
 
 
         // let towers = spw.room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
@@ -63,11 +64,9 @@ var spawnner = {
         if (Memory._extentions && Memory._extentions[0] === 4) {
             //let cpu = Game.cpu.getUsed();
             let s = require('action.' + SPAWNHELPER);
-            s.Build(undefined, spw, false, ++Memory._extentions[2], Memory._extentions[2]);
+            s.Build(undefined, spw, true, ++Memory._extentions[2], Memory._extentions[2]);
             if (Memory._extentions[2] > 16) {
                 Memory._extentions[2] = -1;
-            } else if (Memory._extentions[2] === 0) {
-                Memory._extentions[0] = 5;
             }
             //console.log(Game.cpu.getUsed() - cpu + ' '+Memory._extentions[2]);
         }
@@ -156,7 +155,6 @@ var spawnner = {
                 Memory.creeps_count_by_action[UPGRADE] += 1;
             } else if (c_SPAENHELPER < SPAENHELPERS && c_SPAENHELPER < c_CARRYER - 1) {
                 let name = spw.SpawnCustomCreep(energy, SPAWNHELPER);
-                //Memory.query.push(name);
                 Memory.creeps_count_by_action[SPAWNHELPER] += 1;
             } else if (c_CARRYER < CARRYERS) {
                 spw.SpawnCustomCreep(energy, CARRYER, Memory.need_energy.length > 0 ? {pet: Memory.need_energy.shift()} : undefined);
@@ -174,6 +172,7 @@ var spawnner = {
                 }
             }).length > 0)) {
                 spw.SpawnCustomCreep(energy, LOOTER);
+                Memory.creeps_count_by_action[LOOTER] += 1;
             } else if (spw.room.find(FIND_CONSTRUCTION_SITES).length > 0 && c_BUILDER < BUILDERS) {
                 let name = spw.SpawnCustomCreep(energy, BUILDER);
                 console.log("🔜: " + name);
@@ -193,4 +192,4 @@ var spawnner = {
         }
     }
 };
-module.exports = spawnner;
+module.exports = spawner;
