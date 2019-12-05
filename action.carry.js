@@ -17,7 +17,7 @@ let carry = {
                 }
             case 2:
                 if (creep.memory.pet !== undefined && creep.memory.pet !== null) {
-                    creep.say(creep.memory.pet.substr(7));
+                    //creep.say(creep.memory.pet.substr(7));
                     creep.memory.init = 3;
                     break;
                 }
@@ -49,6 +49,19 @@ let carry = {
     },
 
     /**
+     *  @param {Creep} creep
+     * **/
+    MoveToWhile: function (creep, location) {
+        for (let x = 0; creep.fatigue === 0 && x < 10; x++) {
+            switch (creep.moveTo(location)) {
+                case OK:
+                    continue;
+                default:
+                    break;
+            }
+        }
+    },
+    /**
      * @param {Creep} creep
      * @param {Spawn} spw
      **/
@@ -62,7 +75,7 @@ let carry = {
         if (_pet !== undefined && _pet != null) {
             if (_pet.store[RESOURCE_ENERGY] < _pet.store.getFreeCapacity(RESOURCE_ENERGY)) {
                 if (creep.transfer(_pet, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-                    creep.moveTo(_pet);
+                    this.MoveToWhile(creep, _pet)
                 }
             }
             //else {creep.say('💚');}
@@ -88,7 +101,7 @@ let carry = {
             });
             if (s) {
                 if (creep.withdraw(s, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(s);
+                    this.MoveToWhile(creep, s);
                     return false;
                 } else {
                     //creep.say('♒');
@@ -116,10 +129,8 @@ let carry = {
         //drop.sort((a,b) => a[RESOURCE_ENERGY] - b[RESOURCE_ENERGY]);
         if (drop) {
             if (creep.pickup(drop) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(drop);
-            } else {
-                creep.say('🔼');
-            }
+                this.MoveToWhile(creep, drop);
+            }// else {                creep.say('🔼');            }
         } else {
             creep.moveTo(spw.pos.x + 3, spw.pos.y + 5);
         }
@@ -140,13 +151,13 @@ let carry = {
             });
             if (structures !== undefined && structures != null) {
                 if (structures) {
-                    creep.say('📝');
+                    //creep.say('📝');
                     creep.memory.thaget = structures.id;
                 } //else
                 //console.log(str);
             } else {
                 creep.moveTo(spw.pos.x - 7, spw.pos.y + 1);
-                creep.say('💦');
+                //creep.say('💦');
                 return false;
             }
 
@@ -154,7 +165,7 @@ let carry = {
         let struct = Game.getObjectById(creep.memory.thaget);
         switch (creep.transfer(struct, RESOURCE_ENERGY)) {
             case ERR_NOT_IN_RANGE:
-                creep.moveTo(struct);
+                this.MoveToWhile(creep, struct);
                 break;
             case OK:
                 //creep.say('💱');
@@ -174,7 +185,7 @@ let carry = {
             delete creep.memory.pet;
         }
         if (spw.recycleCreep(creep) === ERR_NOT_IN_RANGE) {
-            creep.moveTo(spw);
+            this.MoveToWhile(creep, spw);
         } else {
             Memory.creeps_count_by_action[creep.action]--;
         }
