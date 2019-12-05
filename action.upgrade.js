@@ -22,6 +22,15 @@ let upgrade = {
                 //Memory.stats.push("else: " + (Game.cpu.getUsed() - c_this) );c_this = Game.cpu.getUsed();
                 creep.moveTo(creep.room.controller/*, {visualizePathStyle: {stroke: '#ceff01'}}*/);
 
+
+                if (!creep.memory._count) creep.memory._count = 1; else {
+                    if (creep.memory._count > 100) {
+                        if (!Memory.pets.includes(creep.id))
+                            Memory.need_energy.push(creep.id);
+                        creep.memory._count = 0;
+                    }
+                    creep.memory._count += 1;
+                }
                 //creep.say('💤');
             }
         }

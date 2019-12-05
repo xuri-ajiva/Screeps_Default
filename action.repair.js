@@ -6,7 +6,19 @@ let repair = {
     run: function (creep, spw) {
         //creep.say('⬇');
 
-        if (!creep.spawning && creep.store[RESOURCE_ENERGY] === 0) return;
+        if (!creep.spawning && creep.store[RESOURCE_ENERGY] === 0) {
+            if (!creep.memory._count)
+                creep.memory._count = 1; else {
+                if (creep.memory._count > 100) {
+                    if (!Memory.pets.includes(creep.id))
+                        Memory.need_energy.push(creep.id);
+                    creep.memory._count = 0;
+                }
+                creep.memory._count += 1;
+            }
+
+            return;
+        }
         // creep.memory.init = 0;
         // delete creep.memory.targets
         // delete creep.memory.target;
@@ -15,18 +27,6 @@ let repair = {
                 creep.memory.init = 1;
                 break;
             case  1:
-                /*const targets = creep.room.find(FIND_STRUCTURES, {
-                    filter: object => ((object.hits < max_hits) && (object.hits < object.hitsMax))
-                });
-                targets.sort((a, b) => a.hits - b.hits);
-                creep.memory.targets = _.map(targets, (t) => {
-                    return t.id;
-                });
-                
-                let tar = creep.pos.findClosestByPath(FIND_STRUCTURES,{
-                    filter: object => ((object.hits < max_hits) && (object.hits < object.hitsMax))
-                });
-                */
                 creep.memory.init = 2;
                 creep.moveTo(spw.x - 8, spw.y + 3);
             //break;
