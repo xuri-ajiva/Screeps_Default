@@ -21,8 +21,8 @@ let carry = {
                     creep.memory.init = 3;
                     break;
                 }
-                if (Memory.need_energy !== undefined && Memory.need_energy.length > 0) {
-                    creep.memory.pet = Memory.need_energy.shift();
+                if (spw.memory.need_energy !== undefined && spw.memory.need_energy.length > 0) {
+                    creep.memory.pet = spw.memory.need_energy.shift();
                     creep.memory.init = 3;
                 }
                 creep.memory.init = 1;
@@ -80,8 +80,10 @@ let carry = {
             }
             //else {creep.say('💚');}
         } else if (!spw.spawning) {
-            console.log("❌ " + creep.memory.pet);
-            delete creep.memory.pet;
+            if (!Game.getObjectById(pet)) {
+                console.log("❌ " + creep.memory.pet);
+                delete creep.memory.pet;
+            }
         }
     },
 
@@ -181,13 +183,13 @@ let carry = {
 
     recycle: function (creep, spw) {
         if (creep.memory.pet) {
-            Memory.need_energy.push(creep.memory.pet);
+            spw.memory.need_energy.push(creep.memory.pet);
             delete creep.memory.pet;
         }
         if (spw.recycleCreep(creep) === ERR_NOT_IN_RANGE) {
             this.MoveToWhile(creep, spw);
         } else {
-            Memory.creeps_count_by_action[creep.action]--;
+            spw.memory.creeps_count_by_action[creep.action]--;
         }
     }
 };

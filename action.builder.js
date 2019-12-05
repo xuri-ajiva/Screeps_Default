@@ -24,7 +24,7 @@ let upgrade = {
         if (spw.recycleCreep(creep) === ERR_NOT_IN_RANGE) {
             creep.moveTo(spw);
         }else{
-            Memory.creeps_count_by_action[creep.action] --;
+            spw.memory.creeps_count_by_action[creep.action] --;
         }
     }
 };

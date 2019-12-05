@@ -69,19 +69,20 @@ module.exports = {
                         }
                         creep.memory.target = Memory.target;
                         let ruin = creep.room.find(FIND_RUINS, {filter: (s) => s.store.getUsedCapacity() > 0});
-                        if(!ruin)
+                        if (!ruin)
                             ruin = creep.room.find(FIND_STRUCTURES, {filter: (s) => s.store.getUsedCapacity() > 0});
                         creep.say(ruin.length + '🎗', true);
                         if (ruin === undefined) {
-                            ruin = flag.room.find(FIND_STRUCTURES, {
-                                filter: (structure) => {
-                                    return structure.structureType !== STRUCTURE_SPAWN && structure.owner !== Game.spawns['Spawn1'].owner;
-                                }
-                            });
-                            creep.say(ruin.length+ '🎟', true);
-                            if (ruin === undefined || ruin === null || ruin.length === 0) {
-                                return;
+
+                        }
+                        ruin = flag.room.find(FIND_STRUCTURES, {
+                            filter: (structure) => {
+                                return structure.structureType !== STRUCTURE_SPAWN && structure.owner !== Game.spawns['Spawn1'].owner;
                             }
+                        });
+                        creep.say(ruin.length + '🎟', true);
+                        if (ruin === undefined || ruin === null || ruin.length === 0) {
+                            return;
                         }
 
                         if (ruin[0])

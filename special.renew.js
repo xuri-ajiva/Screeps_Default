@@ -45,7 +45,7 @@ let renew = {
             case 4:
             case 5:
                 creep.moveTo(spw.pos.x - 5, spw.pos.y + 5);
-                creep.memory.renew++
+                creep.memory.renew++;
                 break;
             case  6:
                 delete creep.memory._beg;

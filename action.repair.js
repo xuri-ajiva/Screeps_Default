@@ -1,7 +1,6 @@
 const max_hits = 100000;
 let repair = {
     /** @param {Creep} creep
-     *  @param {Spawn} spw
      **/
     run: function (creep, spw) {
         //creep.say('⬇');
@@ -10,8 +9,8 @@ let repair = {
             if (!creep.memory._count)
                 creep.memory._count = 1; else {
                 if (creep.memory._count > 100) {
-                    if (!Memory.pets.includes(creep.id))
-                        Memory.need_energy.push(creep.id);
+                    if (!spw.memory.pets.includes(creep.id))
+                        spw.memory.need_energy.push(creep.id);
                     creep.memory._count = 0;
                 }
                 creep.memory._count += 1;
@@ -71,7 +70,7 @@ let repair = {
         if (spw.recycleCreep(creep) === ERR_NOT_IN_RANGE) {
             creep.moveTo(spw);
         } else {
-            Memory.creeps_count_by_action[creep.action]--;
+            spw.memory.creeps_count_by_action[creep.action]--;
         }
     }
 };
