@@ -5,6 +5,10 @@ let renew = {
      *  @param {Spawn} spw
      **/
     reNewCreep(creep, spw) {
+        if (creep.ticksToLive <= 5){
+            creep.memory.renew = 6;
+        }
+
         switch (creep.memory.renew) {
             case 0:
                 //creep.memory._beg = creep.ticksToLive;
@@ -12,14 +16,14 @@ let renew = {
                 creep.memory.path_to_spawn = creep.pos.findPathTo(spw.pos).length;
                 break;
             case  1:
-                creep.say('⏩',true);
+                //creep.say('⏩',true);
                 creep.memory.path_to_spawn--;
                 creep.moveTo(spw);
                 if (creep.memory.path_to_spawn === -3)
                     creep.memory.renew = 2;
                 break;
             case 2:
-                creep.say('✳',true);
+                //creep.say('✳',true);
                 switch (spw.renewCreep(creep)) {
                     case ERR_NOT_IN_RANGE:
                         creep.moveTo(spw);
