@@ -12,14 +12,14 @@ module.exports.loop = function () {
 
     }
 
-    let c = false;
+    let c = 0;
     for (let c_name in Game.creeps) {
         let creep = Game.creeps[c_name];
         //creep.suicide();
 
         if (creep) {
-            if (creep.name == '_claim') {
-                c = true;
+            if (creep.name.includes('claim')) {
+                c ++;
             }
             if (creep.memory.global !== undefined) {
                 creep.say('l')
@@ -91,12 +91,13 @@ module.exports.loop = function () {
 
 let l = 0;
     for (let sp in Game.spawns) {
+        //console.log(Game.spawns[sp]);
         sM(Game.spawns[sp]);
         l++;
     }
 
 
-    if (!c && l < 2) Game.spawns['Spawn1'].createCreep([MOVE,MOVE,MOVE,MOVE,MOVE,MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, WORK, WORK, WORK], '_claim', {
+    if (c < 3 && l < 2) Game.spawns['Spawn1'].createCreep([MOVE,MOVE,MOVE,MOVE,MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, WORK, WORK, WORK], 'claim'+Game.time, {
         global: {
             action: 'GBuildAt',
             memory: {pos: Game.flags['spawn'], struct: STRUCTURE_SPAWN}

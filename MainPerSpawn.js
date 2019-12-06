@@ -102,9 +102,6 @@ module.exports = function (spawn) {
 
     if(false){
         Game.spawns['Spawn1'].createCreep([MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,WORK,WORK,WORK],'_claim',{global: {action:'GBuildAt',memory:{pos:Game.flags['spawn'],struct: STRUCTURE_SPAWN}}});
-
-
-
     }
 
     let co = {

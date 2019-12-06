@@ -36,7 +36,7 @@ let spawner = {
             spawnhelper: 0,
             attack: 0
         };
-        for (let it in Game.creeps) {
+        for (let it in spw.room.find(FIND_MY_CREEPS)) {
             let creep = Game.creeps[it];
             spw.memory.creeps_count_by_action[creep.memory.action] += 1;
         }
@@ -130,7 +130,7 @@ let spawner = {
             let energy = spw.room.energyAvailable;
             //console.log(energy);
             //if (energy < 250) return;
-            if (energy < 150) return;
+            if (energy < 100) return;
             spw.room.visual.text('⚡' + energy + '⚡',
                 spw.pos.x - .7, spw.pos.y,
                 {align: 'left', opacity: 1, color: '#ff00f5', font: .3});
@@ -144,9 +144,9 @@ let spawner = {
             let c_SPAENHELPER = spw.memory.creeps_count_by_action[SPAWNHELPER];
             let c_ATTACKER = spw.memory.creeps_count_by_action[ATTACKE];
 
-            if (c_MINER < MINERS && c_MINER < c_CARRYER) {
-                let name = spw.SpawnCustomCreep(energy, MINER);
-                spw.memory.creeps_count_by_action[MINER] += 1;
+            if (c_CARRYER < CARRYERS) {
+                spw.SpawnCustomCreep(energy, CARRYER, spw.memory.need_energy.length > 0 ? {pet: spw.memory.need_energy.shift()} : undefined);
+                spw.memory.creeps_count_by_action[CARRYER] += 1;
             } else if (c_UPGRADE < UPGRADERS && c_UPGRADE < c_CARRYER - 1) {
                 let name = spw.SpawnCustomCreep(energy, UPGRADE);
                 console.log("🔜: " + name);
@@ -155,9 +155,9 @@ let spawner = {
             } else if (c_SPAENHELPER < SPAENHELPERS && c_SPAENHELPER < c_CARRYER - 1) {
                 let name = spw.SpawnCustomCreep(energy, SPAWNHELPER);
                 spw.memory.creeps_count_by_action[SPAWNHELPER] += 1;
-            } else if (c_CARRYER < CARRYERS) {
-                spw.SpawnCustomCreep(energy, CARRYER, spw.memory.need_energy.length > 0 ? {pet: spw.memory.need_energy.shift()} : undefined);
-                spw.memory.creeps_count_by_action[CARRYER] += 1;
+            } else if (c_MINER < MINERS && c_MINER < c_CARRYER) {
+                let name = spw.SpawnCustomCreep(energy, MINER);
+                spw.memory.creeps_count_by_action[MINER] += 1;
             } else if (c_ATTACKER < 4 && c_ATTACKER < c_CARRYER) {
                 spw.SpawnCustomCreep(energy, ATTACKE);
                 spw.memory.creeps_count_by_action[ATTACKE] += 1;
@@ -183,7 +183,6 @@ let spawner = {
                 spw.memory.query.push(name);
                 spw.memory.creeps_count_by_action[REPAIR] += 1;
             }
-
         } else {
             spw.room.visual.text('🛠️' + Game.creeps[spw.spawning.name].memory.action,
                 spw.pos.x + 1, spw.pos.y,

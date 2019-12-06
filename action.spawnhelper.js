@@ -6,7 +6,7 @@ module.exports = {
     /** @param {Creep} creep
      **/
     run: function (creep, spw) {
-        creep.say('💚');
+        //creep.say('💚');
 
         if (creep.memory.init !== undefined)
             switch (creep.memory.init) {
@@ -47,14 +47,14 @@ module.exports = {
                             if (creep.memory.target === undefined) {
                                 creep.memory.target = creep.memory.targets.pop();
                             }
-                            //while (creep.memory.target['energy'] === 50) {
-                            //    if (creep.memory.targets.length > 0)
-                            //        creep.memory.target = creep.memory.targets.pop();
-                            //    else {
-                            //        creep.memory.init = 10;
-                            //        return;
-                            //    }
-                            //}
+                            while (Game.getObjectById(creep.memory.target['struct']).store.getUsedCapacity() === 0) {
+                                if (creep.memory.targets.length > 0)
+                                    creep.memory.target = creep.memory.targets.pop();
+                                else {
+                                    creep.memory.init = 10;
+                                    return;
+                                }
+                            }
                             let _t = Game.getObjectById(creep.memory.target['struct']);
                             //creep.say(_t.pos.x + '|' + _t.pos.y);
 
@@ -78,7 +78,7 @@ module.exports = {
                     break;
 
                 case 10:
-                    creep.say('🔀');
+                    //creep.say('🔀');
                     creep.memory.targets = [];
                     let structs = spw.room.find(FIND_STRUCTURES);
                     structs.sort((a, b) =>( a.pos.x - b.pos.x)/* * (a.pos.y - b.pos.y)*/);
