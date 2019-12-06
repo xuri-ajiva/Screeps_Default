@@ -97,7 +97,15 @@ module.exports = function (spawn) {
     ///Main Select
 
     ///Game.spawns['Spawn1'].spawnCreep([MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,ATTACK,CARRY], '_test', {memory: {action: 'ctf'}})
+//Game.spawns['Spawn1'].spawnCreep([MOVE,CARRY,WORK,ATTACK], '_test', {memory: {action: 'ctf'}})
 
+
+    if(false){
+        Game.spawns['Spawn1'].createCreep([MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,WORK,WORK,WORK],'_claim',{global: {action:'GBuildAt',memory:{pos:Game.flags['spawn'],struct: STRUCTURE_SPAWN}}});
+
+
+
+    }
 
     let co = {
         miner: [0, 0],
@@ -108,7 +116,8 @@ module.exports = function (spawn) {
         repair: [0, 0],
         spawnhelper: [0, 0],
         attack: [0, 0],
-        ctf: [0, 0]
+        ctf: [0, 0],
+        undefined:[0, 0]
     };
     let s_this = Game.cpu.getUsed();
     let vs = undefined; // spawn.room.visual;

@@ -2,7 +2,7 @@ let miner = {
     /** @param {Creep} creep
      *  @param {Spawn} spw
      **/
-    run: function (creep, spw) {
+    run: function (creep, spw, dropp) {
         function switchsource() {
             let find_sources = creep.room.find(FIND_SOURCES);
             if (find_sources.length > 1) {
@@ -30,17 +30,17 @@ let miner = {
             creep.memory.source = 'init';
             switchsource();
         }
-
         let source = Game.getObjectById(creep.memory.source);
         if (creep.harvest(source) === ERR_NOT_IN_RANGE) {
             creep.memory.count++;
-            creep.moveTo(source/*, {visualizePathStyle: {stroke: '#ffe600'}}*/);
+            creep.moveTo(source, {visualizePathStyle: {stroke: '#ffe600'}});
         }
         //case OK:
         //creep.say('⛏');
         //    break;
 
-        creep.drop(RESOURCE_ENERGY);
+        if (dropp === undefined)
+            creep.drop(RESOURCE_ENERGY);
     },
 
     recycle: function (creep, spw) {

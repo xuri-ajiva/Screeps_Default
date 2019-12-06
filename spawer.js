@@ -12,7 +12,7 @@ const MINERS = 7;
 const BUILDERS = 4;
 const UPGRADERS = 4;
 const REPAIRS = 4;
-const SPAENHELPERS = 2;
+const SPAENHELPERS = 4;
 
 let spawner = {
     Init: function (Game, spw) {
