@@ -66,18 +66,18 @@ let carry = {
      * @param {Spawn} spw
      **/
     TakeCareOfPet: function (creep, spw, pet) {
-        if (creep.store[RESOURCE_ENERGY] < creep.store.getFreeCapacity() * 0.5) {
+        if (creep.store[RESOURCE_ENERGY] < creep.store.getCapacity(RESOURCE_ENERGY) * .9) {
             if (!this.GetEnergy(creep, spw, true))
                 return;
         }
 
         let _pet = Game.getObjectById(pet);
         if (_pet !== undefined && _pet != null) {
-            if (_pet.store[RESOURCE_ENERGY] < _pet.store.getFreeCapacity(RESOURCE_ENERGY)) {
+            if (_pet.store[RESOURCE_ENERGY] < _pet.store.getCapacity(RESOURCE_ENERGY)*.9) {
                 if (creep.transfer(_pet, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
                     this.MoveToWhile(creep, _pet)
                 }
-            }
+            }else{creep.moveTo(_pet);}
             //else {creep.say('💚');}
         } else if (!spw.spawning) {
             if (!Game.getObjectById(pet)) {
@@ -96,9 +96,9 @@ let carry = {
     GetEnergy: function (creep, spw, container) {
         if (container) {
             let s = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                filter: (structure) => {
-                    return (structure.structureType === STRUCTURE_CONTAINER || structure.structureType === STRUCTURE_STORAGE)
-                        && structure.store[RESOURCE_ENERGY] > 0;
+                filter: (s) => {
+                    return (s.structureType === STRUCTURE_CONTAINER || s.structureType === STRUCTURE_STORAGE || s.structureType === STRUCTURE_LINK)
+                        && s.store[RESOURCE_ENERGY] > 0 && s.id !== creep.memory.pet;
                 }
             });
             if (s) {

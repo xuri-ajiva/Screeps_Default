@@ -13,7 +13,6 @@ module.exports = {
                 case 0:
                     creep.memory.init = 1;
                     break;
-
                 case 1:
                     //creep.say('lila');
                     if (spw.room.energyAvailable < spw.room.energyCapacityAvailable) {
@@ -47,7 +46,7 @@ module.exports = {
                             if (creep.memory.target === undefined) {
                                 creep.memory.target = creep.memory.targets.pop();
                             }
-                            while (Game.getObjectById(creep.memory.target['struct']).store.getUsedCapacity() === 0) {
+                            while (Game.getObjectById(creep.memory.target['struct']).store.getFreeCapacity(RESOURCE_ENERGY) === 0) {
                                 if (creep.memory.targets.length > 0)
                                     creep.memory.target = creep.memory.targets.pop();
                                 else {
@@ -60,7 +59,7 @@ module.exports = {
 
                             switch (creep.transfer(_t, RESOURCE_ENERGY)) {
                                 case ERR_NOT_IN_RANGE:
-                                    creep.room.visual.text('⭕',_t.pos.x,_t.pos.y);
+                                    creep.room.visual.text('🎆', _t.pos.x, _t.pos.y);
                                     creep.moveTo(_t);
                                     break;
                                 case ERR_FULL:
@@ -81,19 +80,18 @@ module.exports = {
                     //creep.say('🔀');
                     creep.memory.targets = [];
                     let structs = spw.room.find(FIND_STRUCTURES);
-                    structs.sort((a, b) =>( a.pos.x - b.pos.x)/* * (a.pos.y - b.pos.y)*/);
+                    structs.sort((a, b) => (a.pos.x - b.pos.x)/* * (a.pos.y - b.pos.y)*/);
                     //_.sortBy(structs, s => creep.pos.getRangeTo(s));
 
                     let x = 0;
-                    for (let s in  structs){
+                    for (let s in structs) {
                         let struct = structs[s];
 
-                        if(struct.structureType === STRUCTURE_EXTENSION){
-                            creep.room.visual.text(''+(x++),struct.pos.x,struct.pos.y ,{font: 0.2});
+                        if (struct.structureType === STRUCTURE_EXTENSION) {
+                            //creep.room.visual.text('' + (x++), struct.pos.x, struct.pos.y, {font: 0.2});
                             creep.memory.targets.push({struct: struct.id, energy: struct.store[RESOURCE_ENERGY]});
                         }
                     }
-
 
 
                     //let structs = spw.room.find(FIND_STRUCTURES, {filter: (s) => s.structureType === STRUCTURE_EXTENSION && s.store.getFreeCapacity(RESOURCE_ENERGY) > 0});
@@ -320,9 +318,9 @@ module.exports = {
                         spw.room.visual.text('⬛', i, j);
                     else
                         spw.room.createConstructionSite(i, j, STRUCTURE_WALL);
-                } else if ((x + 1 == i && y + 1 == j) || (x + size - 1 == i && y + size - 1 == j) || (x + size - 1 == i && y + 1 == j) || (x + 1 == i && y + size - 1 == j)) {
+                }/* else if ((x + 1 == i && y + 1 == j) || (x + size - 1 == i && y + size - 1 == j) || (x + size - 1 == i && y + 1 == j) || (x + 1 == i && y + size - 1 == j)) {
                     if (prew) spw.room.visual.text('🔲', i, j); else spw.room.createConstructionSite(i, j, STRUCTURE_CONTAINER);
-                } else if (i > x + 2 && i < x + size - 2 && j == y + h_size) {
+                }*/ else if (i > x + 2 && i < x + size - 2 && j == y + h_size) {
                     if (prew)
                         spw.room.visual.text('🔸', i, j);
                     else spw.room.createConstructionSite(i, j, STRUCTURE_ROAD);

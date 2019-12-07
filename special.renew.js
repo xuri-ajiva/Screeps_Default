@@ -57,6 +57,13 @@ let renew = {
                 creep.memory.renew = 0;
                 break;
         }
+    },
+    recycle: function (creep,spawn) {
+        if (spawn.recycleCreep(creep) === ERR_NOT_IN_RANGE) {
+            creep.moveTo(spawn);
+        }else{
+            console.log("resycle: " + creep.name);
+        }
     }
 
 

@@ -34,6 +34,8 @@ let miner = {
         if (creep.harvest(source) === ERR_NOT_IN_RANGE) {
             creep.memory.count++;
             creep.moveTo(source, {visualizePathStyle: {stroke: '#ffe600'}});
+        }else{
+            creep.memory.count = 0;
         }
         //case OK:
         //creep.say('⛏');
