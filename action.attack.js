@@ -11,7 +11,7 @@ module.exports = {
                 creep.moveTo(enemy);
             }
         } else {
-            creep.moveTo(spw.pos.x - 7, spw.pos.y + 8);
+            creep.moveTo(spw.pos.x - 5, spw.pos.y + 5);
         }
 
     }

@@ -1,7 +1,6 @@
 const max_hits = 100000;
 let repair = {
     /** @param {Creep} creep
-     *  @param {Spawn} spw
      **/
     run: function (creep, spw) {
         //creep.say('⬇');
@@ -10,8 +9,8 @@ let repair = {
             if (!creep.memory._count)
                 creep.memory._count = 1; else {
                 if (creep.memory._count > 100) {
-                    if (!Memory.pets.includes(creep.id))
-                        Memory.need_energy.push(creep.id);
+                    if (!spw.memory.pets.includes(creep.id))
+                        spw.memory.need_energy.push(creep.id);
                     creep.memory._count = 0;
                 }
                 creep.memory._count += 1;
@@ -28,7 +27,7 @@ let repair = {
                 break;
             case  1:
                 creep.memory.init = 2;
-                creep.moveTo(spw.x - 8, spw.y + 3);
+                creep.moveTo(spw.pos.x - 5, spw.pos.y - 5);
             //break;
             case  2:
                 //if (creep.memory.targets.length > 0) {
@@ -38,7 +37,7 @@ let repair = {
                     if (need_repair)
                         creep.memory.target = need_repair.id;
                     else
-                        creep.moveTo(spw.pos.x - 4, spw.pos.y - 4);
+                        creep.moveTo(spw.pos.x - 5, spw.pos.y - 5);
                 } else {
                     delete creep.memory.target;
                 }
@@ -53,7 +52,7 @@ let repair = {
                     if (creep.repair(target) === ERR_NOT_IN_RANGE)
                         creep.moveTo(target);
                     else {
-                        creep.moveTo(target.x - 2, target.y - 2);
+                        creep.moveTo(target.x + 2, target.y);
                         //creep.say('🔧: ' + target.hits);
                     }
                 } else {
@@ -71,7 +70,7 @@ let repair = {
         if (spw.recycleCreep(creep) === ERR_NOT_IN_RANGE) {
             creep.moveTo(spw);
         } else {
-            Memory.creeps_count_by_action[creep.action]--;
+            spw.memory.creeps_count_by_action[creep.action]--;
         }
     }
 };

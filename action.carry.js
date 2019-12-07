@@ -3,7 +3,12 @@ let carry = {
      * @param {Creep} creep
      * @param {Spawn} spw
      **/
-    run: function (creep, spw) {
+    run: function (creep, spw, doNotGetBackInRoom) {
+        if (creep.room !== spw.room && !doNotGetBackInRoom) {
+            creep.say('fail');
+            creep.moveTo(spw);
+            return;
+        }
         switch (creep.memory.init) {
             //init
             case 0:
@@ -21,8 +26,8 @@ let carry = {
                     creep.memory.init = 3;
                     break;
                 }
-                if (Memory.need_energy !== undefined && Memory.need_energy.length > 0) {
-                    creep.memory.pet = Memory.need_energy.shift();
+                if (spw.memory.need_energy !== undefined && spw.memory.need_energy.length > 0) {
+                    creep.memory.pet = spw.memory.need_energy.shift();
                     creep.memory.init = 3;
                 }
                 creep.memory.init = 1;
@@ -52,36 +57,34 @@ let carry = {
      *  @param {Creep} creep
      * **/
     MoveToWhile: function (creep, location) {
-        for (let x = 0; creep.fatigue === 0 && x < 10; x++) {
-            switch (creep.moveTo(location)) {
-                case OK:
-                    continue;
-                default:
-                    break;
-            }
-        }
+        if (creep.fatigue === 0)
+            creep.moveTo(location);
     },
     /**
      * @param {Creep} creep
      * @param {Spawn} spw
      **/
     TakeCareOfPet: function (creep, spw, pet) {
-        if (creep.store[RESOURCE_ENERGY] < creep.store.getFreeCapacity() * 0.5) {
+        if (creep.store[RESOURCE_ENERGY] < creep.store.getCapacity(RESOURCE_ENERGY) * .9) {
             if (!this.GetEnergy(creep, spw, true))
                 return;
         }
 
         let _pet = Game.getObjectById(pet);
         if (_pet !== undefined && _pet != null) {
-            if (_pet.store[RESOURCE_ENERGY] < _pet.store.getFreeCapacity(RESOURCE_ENERGY)) {
+            if (_pet.store[RESOURCE_ENERGY] < _pet.store.getCapacity(RESOURCE_ENERGY) * .9) {
                 if (creep.transfer(_pet, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
                     this.MoveToWhile(creep, _pet)
                 }
+            } else {
+                creep.moveTo(_pet);
             }
             //else {creep.say('💚');}
         } else if (!spw.spawning) {
-            console.log("❌ " + creep.memory.pet);
-            delete creep.memory.pet;
+            if (!Game.getObjectById(pet)) {
+                console.log("❌ " + creep.memory.pet);
+                delete creep.memory.pet;
+            }
         }
     },
 
@@ -94,9 +97,9 @@ let carry = {
     GetEnergy: function (creep, spw, container) {
         if (container) {
             let s = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                filter: (structure) => {
-                    return (structure.structureType === STRUCTURE_CONTAINER || structure.structureType === STRUCTURE_STORAGE)
-                        && structure.store[RESOURCE_ENERGY] > 0;
+                filter: (s) => {
+                    return (s.structureType === STRUCTURE_CONTAINER || s.structureType === STRUCTURE_STORAGE || s.structureType === STRUCTURE_LINK)
+                        && s.store[RESOURCE_ENERGY] > 0 && s.id !== creep.memory.pet;
                 }
             });
             if (s) {
@@ -123,16 +126,25 @@ let carry = {
     PickupDroppedResources: function (creep, spw) {
         let drop = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {
             filter: (s) => {
-                return s[RESOURCE_ENERGY] >= 5;
+                return s[RESOURCE_ENERGY] >= 50;
             }
         });
+
+        var dropenergy = creep.room.find(FIND_DROPPED_RESOURCES, {
+            filter: (d) => d.amount >= 500
+        });
+        if (dropenergy.length) {
+            dropenergy.sort((a, b) => a[RESOURCE_ENERGY] - b[RESOURCE_ENERGY])
+            drop = dropenergy[0];
+        }
+
         //drop.sort((a,b) => a[RESOURCE_ENERGY] - b[RESOURCE_ENERGY]);
         if (drop) {
             if (creep.pickup(drop) == ERR_NOT_IN_RANGE) {
                 this.MoveToWhile(creep, drop);
             }// else {                creep.say('🔼');            }
         } else {
-            creep.moveTo(spw.pos.x + 3, spw.pos.y + 5);
+            creep.moveTo(spw.pos.x - 5, spw.pos.y);
         }
     },
 
@@ -156,7 +168,7 @@ let carry = {
                 } //else
                 //console.log(str);
             } else {
-                creep.moveTo(spw.pos.x - 7, spw.pos.y + 1);
+                creep.moveTo(spw.pos.x - 5, spw.pos.y);
                 //creep.say('💦');
                 return false;
             }
@@ -181,13 +193,13 @@ let carry = {
 
     recycle: function (creep, spw) {
         if (creep.memory.pet) {
-            Memory.need_energy.push(creep.memory.pet);
+            spw.memory.need_energy.push(creep.memory.pet);
             delete creep.memory.pet;
         }
         if (spw.recycleCreep(creep) === ERR_NOT_IN_RANGE) {
             this.MoveToWhile(creep, spw);
         } else {
-            Memory.creeps_count_by_action[creep.action]--;
+            spw.memory.creeps_count_by_action[creep.action]--;
         }
     }
 };

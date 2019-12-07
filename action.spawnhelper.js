@@ -4,17 +4,18 @@ const max = 50 - min;
 
 module.exports = {
     /** @param {Creep} creep
-     *  @param {Spawn} spw
      **/
     run: function (creep, spw) {
-        creep.say('💚');
-
+        //creep.say('💚');
+        //let t = creep.room.find(FIND_MY_CONSTRUCTION_SITES);
+        //for (const i in t) {
+        //    t[i].remove();
+        //}
         if (creep.memory.init !== undefined)
             switch (creep.memory.init) {
                 case 0:
                     creep.memory.init = 1;
                     break;
-
                 case 1:
                     //creep.say('lila');
                     if (spw.room.energyAvailable < spw.room.energyCapacityAvailable) {
@@ -48,20 +49,20 @@ module.exports = {
                             if (creep.memory.target === undefined) {
                                 creep.memory.target = creep.memory.targets.pop();
                             }
-                            //while (creep.memory.target['energy'] === 50) {
-                            //    if (creep.memory.targets.length > 0)
-                            //        creep.memory.target = creep.memory.targets.pop();
-                            //    else {
-                            //        creep.memory.init = 10;
-                            //        return;
-                            //    }
-                            //}
+                            while (Game.getObjectById(creep.memory.target['struct']).store.getFreeCapacity(RESOURCE_ENERGY) === 0) {
+                                if (creep.memory.targets.length > 0)
+                                    creep.memory.target = creep.memory.targets.pop();
+                                else {
+                                    creep.memory.init = 10;
+                                    return;
+                                }
+                            }
                             let _t = Game.getObjectById(creep.memory.target['struct']);
                             //creep.say(_t.pos.x + '|' + _t.pos.y);
 
                             switch (creep.transfer(_t, RESOURCE_ENERGY)) {
                                 case ERR_NOT_IN_RANGE:
-                                    creep.room.visual.text('⭕',_t.pos.x,_t.pos.y);
+                                    creep.room.visual.text('🎆', _t.pos.x, _t.pos.y);
                                     creep.moveTo(_t);
                                     break;
                                 case ERR_FULL:
@@ -79,22 +80,21 @@ module.exports = {
                     break;
 
                 case 10:
-                    creep.say('🔀');
+                    //creep.say('🔀');
                     creep.memory.targets = [];
                     let structs = spw.room.find(FIND_STRUCTURES);
-                    structs.sort((a, b) =>( a.pos.x - b.pos.x)/* * (a.pos.y - b.pos.y)*/);
+                    structs.sort((a, b) => (a.pos.x - b.pos.x)/* * (a.pos.y - b.pos.y)*/);
                     //_.sortBy(structs, s => creep.pos.getRangeTo(s));
 
                     let x = 0;
-                    for (let s in  structs){
+                    for (let s in structs) {
                         let struct = structs[s];
 
-                        if(struct.structureType === STRUCTURE_EXTENSION){
-                            creep.room.visual.text(''+(x++),struct.pos.x,struct.pos.y ,{font: 0.2});
+                        if (struct.structureType === STRUCTURE_EXTENSION) {
+                            //creep.room.visual.text('' + (x++), struct.pos.x, struct.pos.y, {font: 0.2});
                             creep.memory.targets.push({struct: struct.id, energy: struct.store[RESOURCE_ENERGY]});
                         }
                     }
-
 
 
                     //let structs = spw.room.find(FIND_STRUCTURES, {filter: (s) => s.structureType === STRUCTURE_EXTENSION && s.store.getFreeCapacity(RESOURCE_ENERGY) > 0});
@@ -109,11 +109,11 @@ module.exports = {
                     break;
             }
         else {
-            if (Memory._extentions !== undefined) {
-                switch (Memory._extentions[0]) {
+            if (spw.memory._extentions !== undefined) {
+                switch (spw.memory._extentions[0]) {
                     case 0:
-                        Memory._extentions[1] = spw.room.find(FIND_STRUCTURES, {filter: (s) => s.structureType === STRUCTURE_EXTENSION});
-                        Memory._extentions[0] = 1;
+                        spw.memory._extentions[1] = spw.room.find(FIND_STRUCTURES, {filter: (s) => s.structureType === STRUCTURE_EXTENSION});
+                        spw.memory._extentions[0] = 1;
 
                         break;
                     case 1:
@@ -122,11 +122,11 @@ module.exports = {
                         //for (const i in t) {
                         //    t[i].remove();
                         //}
-                        Memory._extentions[0] = 2;
+                        spw.memory._extentions[0] = 2;
                         break;
                     case 2:
-                        let x = Memory._extentions[1]['x'];
-                        let y = Memory._extentions[1]['y'];
+                        let x = spw.memory._extentions[1]['x'];
+                        let y = spw.memory._extentions[1]['y'];
                         for (let i = x; i <= x + size; i++) {
                             for (let j = y; j <= y + size; j++) {
                                 let rp = spw.room.getPositionAt(i, j);
@@ -141,14 +141,14 @@ module.exports = {
                                 }
                             }
                         }
-                        Memory._extentions[0] = 3;
+                        spw.memory._extentions[0] = 3;
 
-                        //Memory._extentions[0] = 1;
+                        //spw.memory._extentions[0] = 1;
                         break;
                     case 3:
                         //for (let i = 0; i <= 2 + size; i++)
                         this.Build(creep, spw, false);
-                        Memory._extentions[0] = 4;
+                        spw.memory._extentions[0] = 4;
                         break;
                     case 4:
                     case 5:
@@ -160,22 +160,21 @@ module.exports = {
                         break;
 
                     // default:
-                    //     Memory._extentions[0] = 0;
+                    //     spw.memory._extentions[0] = 0;
                     //     break
                 }
 
 
             } else {
-                Memory._extentions = [];
-                Memory._extentions.push(0);
-                Memory._extentions.push(0);
-                Memory._extentions.push(0);
+                spw.memory._extentions = [];
+                spw.memory._extentions.push(0);
+                spw.memory._extentions.push(0);
+                spw.memory._extentions.push(0);
             }
         }
     },
 
     /** @param {Creep} creep
-     *  @param {Spawn} spw
      **/
     detectPos: function (creep, spw) {
         const iGameDistCheck = false;
@@ -232,7 +231,7 @@ module.exports = {
                                     let dist_2 = iGameDistCheck ? spw.room.controller.pos.getRangeTo(x + t_size, y + t_size) : Math.sqrt(Math.pow(spw.room.controller.y - (y + t_size), 2) + Math.pow((spw.room.controller.x - (x + t_size)), 2));
                                     dist_n = dist_2 < dist_n ? dist_2 : dist_n;
 
-                                    //visual.text(dist_n.toFixed(0), (x+h_size), (y+h_size) );
+                                    visual.text(dist_n.toFixed(0), (x+h_size), (y+h_size) );
 
                                     //visual.rect(px, py, size, size, {
                                     //    strokeWidth: .1,
@@ -241,7 +240,7 @@ module.exports = {
                                     //});
 
                                     if (dist_n.toFixed(0) == 8) {
-                                        Memory._extentions[1] = {x: px, y: py};
+                                        spw.memory._extentions[1] = {x: px, y: py};
 
                                         visual.rect(px, py, size, size, {
                                             strokeWidth: .8,
@@ -265,21 +264,22 @@ module.exports = {
                                         return;
                                     }
                                     if (dist_n > 8 && dist_n < dist && dist_n < 18) {
-                                        Memory._extentions[1] = {x: px, y: py};
                                         dist = dist_n;
                                         px = x;
                                         py = y;
+                                        spw.memory._extentions[1] = {x: px, y: py};
+                                        //visual.text(JSON.stringify(spw.memory._extentions[1]),20,20)
 
-                                        //visual.rect(px, py, size, size, {
-                                        //    strokeWidth: .8,
-                                        //    fill: '#ffdb00',
-                                        //    stroke: '#000000'
-                                        //});
-                                        //visual.rect(px - 1, py - 1, size + 2, size + 2, {
-                                        //    strokeWidth: .5,
-                                        //    fill: 'transparent',
-                                        //    stroke: '#00ff1e'
-                                        //});
+                                        visual.rect(px, py, size, size, {
+                                            strokeWidth: .8,
+                                            fill: '#ffdb00',
+                                            stroke: '#000000'
+                                        });
+                                        visual.rect(px - 1, py - 1, size + 2, size + 2, {
+                                            strokeWidth: .5,
+                                            fill: 'transparent',
+                                            stroke: '#00ff1e'
+                                        });
                                     }
                                 }
 
@@ -292,7 +292,6 @@ module.exports = {
     },
 
     /** @param {Creep} creep
-     *  @param {Spawn} spw
      *  @param {Boolean} prew
      **/
     Build: function (creep, spw, prew, x_start, x_stop) {
@@ -309,8 +308,8 @@ module.exports = {
 
         let h_size = (size / 2);
         let q_size = Math.floor(size / 4);
-        let x = Memory._extentions[1]['x'];
-        let y = Memory._extentions[1]['y'];
+        let x = spw.memory._extentions[1]['x'];
+        let y = spw.memory._extentions[1]['y'];
         //creep.say(q_size);
         //creep.moveTo(x, y);
         for (let i = x + _start; i <= x + _stop; i++) {
@@ -323,9 +322,9 @@ module.exports = {
                         spw.room.visual.text('⬛', i, j);
                     else
                         spw.room.createConstructionSite(i, j, STRUCTURE_WALL);
-                } else if ((x + 1 == i && y + 1 == j) || (x + size - 1 == i && y + size - 1 == j) || (x + size - 1 == i && y + 1 == j) || (x + 1 == i && y + size - 1 == j)) {
+                }/* else if ((x + 1 == i && y + 1 == j) || (x + size - 1 == i && y + size - 1 == j) || (x + size - 1 == i && y + 1 == j) || (x + 1 == i && y + size - 1 == j)) {
                     if (prew) spw.room.visual.text('🔲', i, j); else spw.room.createConstructionSite(i, j, STRUCTURE_CONTAINER);
-                } else if (i > x + 2 && i < x + size - 2 && j == y + h_size) {
+                }*/ else if (i > x + 2 && i < x + size - 2 && j == y + h_size) {
                     if (prew)
                         spw.room.visual.text('🔸', i, j);
                     else spw.room.createConstructionSite(i, j, STRUCTURE_ROAD);
