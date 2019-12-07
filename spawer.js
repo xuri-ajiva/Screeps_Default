@@ -8,7 +8,7 @@ const LOOTER = 'lootcolector';
 const SPAWNHELPER = 'spawnhelper';
 const ATTACKE = 'attack';
 const CARRYERS = 17; //(+1)
-const MINERS = 7;
+const MINERS = 8;
 const BUILDERS = 4;
 const UPGRADERS = 4;
 const REPAIRS = 4;
@@ -162,7 +162,7 @@ let spawner = {
             } else if (c_ATTACKER < 4 && c_ATTACKER < c_CARRYER) {
                 spw.SpawnCustomCreep(energy, ATTACKE);
                 Memory.creeps_count_by_action[ATTACKE] += 1;
-            } else if (c_LOOTER < 1 && c_LOOTER < c_CARRYER && (spw.room.find(FIND_RUINS, {
+            }/* else if (c_LOOTER < 1 && c_LOOTER < c_CARRYER && (spw.room.find(FIND_RUINS, {
                 filter: (structure) => {
                     return structure.store[RESOURCE_ENERGY] > 0;
                 }
@@ -173,7 +173,7 @@ let spawner = {
             }).length > 0)) {
                 spw.SpawnCustomCreep(energy, LOOTER);
                 Memory.creeps_count_by_action[LOOTER] += 1;
-            } else if (spw.room.find(FIND_CONSTRUCTION_SITES).length > 0 && c_BUILDER < BUILDERS) {
+            } */else if (spw.room.find(FIND_CONSTRUCTION_SITES).length > 0 && c_BUILDER < BUILDERS) {
                 let name = spw.SpawnCustomCreep(energy, BUILDER);
                 console.log("🔜: " + name);
                 Memory.query.push(name);

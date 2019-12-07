@@ -170,11 +170,11 @@ module.exports.loop = function () {
                 default:
                     break;
             }
-            co[creep.memory.action][1]++;
-            if (co[creep.memory.action][0] < (Game.cpu.getUsed() - c_this).toFixed(4)) {
-                //console.log(creep.name);
-                co[creep.memory.action][0] = (Game.cpu.getUsed() - c_this).toFixed(4);
-            }
+            //co[creep.memory.action][1]++;
+            //if (co[creep.memory.action][0] < (Game.cpu.getUsed() - c_this).toFixed(4)) {
+            //    //console.log(creep.name);
+            //    co[creep.memory.action][0] = (Game.cpu.getUsed() - c_this).toFixed(4);
+            //}
             //Memory.stats.push(creep.memory.action + ': ' + (Game.cpu.getUsed() - c_this).toFixed(2));
         }
     }
