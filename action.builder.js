@@ -9,9 +9,9 @@ let upgrade = {
             let ret = creep.build(construct);
             if (ret === ERR_NOT_IN_RANGE) {
                 creep.moveTo(construct);
-            } /*else {
-                creep.moveTo(construct.pos.x - 2, construct.pos.y);
-            }*/
+            } else {
+                creep.moveTo(construct.pos.x + 2, construct.pos.y);
+            }
         } else {
             if (spw.recycleCreep(creep) === ERR_NOT_IN_RANGE) {
                 creep.moveTo(spw);

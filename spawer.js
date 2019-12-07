@@ -7,8 +7,8 @@ const REPAIR = 'repair';
 const LOOTER = 'lootcolector';
 const SPAWNHELPER = 'spawnhelper';
 const ATTACKE = 'attack';
-const CARRYERS = 17; //(+1)
-const MINERS = 8;
+const CARRYERS = 16; //(+1)
+const MINERS = 7;
 const BUILDERS = 4;
 const UPGRADERS = 4;
 const REPAIRS = 4;
@@ -61,6 +61,7 @@ module.exports = {
                 pets.push(ca.memory.pet);
             }
         }
+
 
         if (spw.memory._extentions && spw.memory._extentions[0] === 4) {
             let s = require('action.' + SPAWNHELPER);
@@ -143,20 +144,20 @@ module.exports = {
 
 
             if (energy < 200) return;
-            if (c_CARRYER < CARRYERS) {
-                spw.SpawnCustomCreep(energy, CARRYER, spw.memory.need_energy.length > 0 ? {pet: spw.memory.need_energy.shift()} : undefined);
-                spw.memory.creeps_count_by_action[CARRYER] += 1;
+            if (c_MINER < MINERS && c_MINER < c_CARRYER) {
+                let name = spw.SpawnCustomCreep(energy, MINER);
+                spw.memory.creeps_count_by_action[MINER] += 1;
             } else if (c_UPGRADE < UPGRADERS && c_UPGRADE < c_CARRYER - 1) {
                 let name = spw.SpawnCustomCreep(energy, UPGRADE);
                 console.log("🔜: " + name);
                 spw.memory.query.push(name);
                 spw.memory.creeps_count_by_action[UPGRADE] += 1;
-            } else if (c_SPAENHELPER < SPAENHELPERS && c_SPAENHELPER < c_CARRYER - 1) {
+            } else if (c_SPAENHELPER < SPAENHELPERS && c_SPAENHELPER < c_CARRYER - 1 && spw.room.energyCapacityAvailable > 300) {
                 let name = spw.SpawnCustomCreep(energy, SPAWNHELPER);
                 spw.memory.creeps_count_by_action[SPAWNHELPER] += 1;
-            } else if (c_MINER < MINERS && c_MINER < c_CARRYER) {
-                let name = spw.SpawnCustomCreep(energy, MINER);
-                spw.memory.creeps_count_by_action[MINER] += 1;
+            } else if (c_CARRYER < CARRYERS) {
+                spw.SpawnCustomCreep(energy, CARRYER, spw.memory.need_energy.length > 0 ? {pet: spw.memory.need_energy.shift()} : undefined);
+                spw.memory.creeps_count_by_action[CARRYER] += 1;
             } else if (c_ATTACKER < 4 && c_ATTACKER < c_CARRYER) {
                 spw.SpawnCustomCreep(energy, ATTACKE);
                 spw.memory.creeps_count_by_action[ATTACKE] += 1;
@@ -172,7 +173,7 @@ module.exports = {
                 spw.SpawnCustomCreep(energy, LOOTER);
                 spw.memory.creeps_count_by_action[LOOTER] += 1;
             }*/ else if (spw.room.find(FIND_CONSTRUCTION_SITES).length > 0 && c_BUILDER < BUILDERS) {
-                if(energy < 300) return;
+                if (energy < 300) return;
                 let name = spw.SpawnCustomCreep(energy, BUILDER);
                 console.log("🔜: " + name);
                 spw.memory.query.push(name);

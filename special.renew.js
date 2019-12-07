@@ -2,10 +2,9 @@ const max_hp = 2000;
 
 let renew = {
     /** @param {Creep} creep
-     *  @param {Spawn} spw
      **/
     reNewCreep(creep, spw) {
-        if (creep.ticksToLive <= 5){
+        if (creep.ticksToLive <= 5) {
             creep.memory.renew = 6;
         }
 
@@ -23,8 +22,13 @@ let renew = {
                     creep.memory.renew = 2;
                 break;
             case 2:
+                if (spw.room.energyCapacityAvailable < 500) {
+                    creep.transfer(spw, RESOURCE_ENERGY);
+                }
+                let res = spw.room.energyCapacityAvailable < 500 ? spw.recycleCreep(creep) : spw.renewCreep(creep);
+
                 //creep.say('✳',true);
-                switch (spw.renewCreep(creep)) {
+                switch (res) {
                     case ERR_NOT_IN_RANGE:
                         creep.moveTo(spw);
                         break;
@@ -32,10 +36,10 @@ let renew = {
                         creep.memory.renew = 3;
                         break;
                     case  ERR_BUSY:
-                        creep.moveTo(spw.pos.x - 5, spw.pos.y + 5);
+                        creep.moveTo(spw.pos.x + 5, spw.pos.y - 5);
                     case ERR_NOT_ENOUGH_ENERGY:
-                        if(creep.store[RESOURCE_ENERGY] > 0)
-                            creep.transfer(spw,RESOURCE_ENERGY);
+                        if (creep.store[RESOURCE_ENERGY] > 0)
+                            creep.transfer(spw, RESOURCE_ENERGY);
                         break;
                     default:
                         break;
@@ -52,16 +56,16 @@ let renew = {
                 delete creep.memory.renew;
                 delete creep.memory.path_to_spawn;
                 delete creep.memory.renew;
-                break
+                break;
             default:
                 creep.memory.renew = 0;
                 break;
         }
     },
-    recycle: function (creep,spawn) {
+    recycle: function (creep, spawn) {
         if (spawn.recycleCreep(creep) === ERR_NOT_IN_RANGE) {
             creep.moveTo(spawn);
-        }else{
+        } else {
             console.log("resycle: " + creep.name);
         }
     }

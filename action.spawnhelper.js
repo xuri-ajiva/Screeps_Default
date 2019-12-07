@@ -7,7 +7,10 @@ module.exports = {
      **/
     run: function (creep, spw) {
         //creep.say('💚');
-
+        //let t = creep.room.find(FIND_MY_CONSTRUCTION_SITES);
+        //for (const i in t) {
+        //    t[i].remove();
+        //}
         if (creep.memory.init !== undefined)
             switch (creep.memory.init) {
                 case 0:
@@ -228,7 +231,7 @@ module.exports = {
                                     let dist_2 = iGameDistCheck ? spw.room.controller.pos.getRangeTo(x + t_size, y + t_size) : Math.sqrt(Math.pow(spw.room.controller.y - (y + t_size), 2) + Math.pow((spw.room.controller.x - (x + t_size)), 2));
                                     dist_n = dist_2 < dist_n ? dist_2 : dist_n;
 
-                                    //visual.text(dist_n.toFixed(0), (x+h_size), (y+h_size) );
+                                    visual.text(dist_n.toFixed(0), (x+h_size), (y+h_size) );
 
                                     //visual.rect(px, py, size, size, {
                                     //    strokeWidth: .1,
@@ -261,21 +264,22 @@ module.exports = {
                                         return;
                                     }
                                     if (dist_n > 8 && dist_n < dist && dist_n < 18) {
-                                        spw.memory._extentions[1] = {x: px, y: py};
                                         dist = dist_n;
                                         px = x;
                                         py = y;
+                                        spw.memory._extentions[1] = {x: px, y: py};
+                                        //visual.text(JSON.stringify(spw.memory._extentions[1]),20,20)
 
-                                        //visual.rect(px, py, size, size, {
-                                        //    strokeWidth: .8,
-                                        //    fill: '#ffdb00',
-                                        //    stroke: '#000000'
-                                        //});
-                                        //visual.rect(px - 1, py - 1, size + 2, size + 2, {
-                                        //    strokeWidth: .5,
-                                        //    fill: 'transparent',
-                                        //    stroke: '#00ff1e'
-                                        //});
+                                        visual.rect(px, py, size, size, {
+                                            strokeWidth: .8,
+                                            fill: '#ffdb00',
+                                            stroke: '#000000'
+                                        });
+                                        visual.rect(px - 1, py - 1, size + 2, size + 2, {
+                                            strokeWidth: .5,
+                                            fill: 'transparent',
+                                            stroke: '#00ff1e'
+                                        });
                                     }
                                 }
 

@@ -27,7 +27,7 @@ let repair = {
                 break;
             case  1:
                 creep.memory.init = 2;
-                creep.moveTo(spw.x - 8, spw.y + 3);
+                creep.moveTo(spw.pos.x - 5, spw.pos.y - 5);
             //break;
             case  2:
                 //if (creep.memory.targets.length > 0) {
@@ -37,7 +37,7 @@ let repair = {
                     if (need_repair)
                         creep.memory.target = need_repair.id;
                     else
-                        creep.moveTo(spw.pos.x - 4, spw.pos.y - 4);
+                        creep.moveTo(spw.pos.x - 5, spw.pos.y - 5);
                 } else {
                     delete creep.memory.target;
                 }
@@ -52,7 +52,7 @@ let repair = {
                     if (creep.repair(target) === ERR_NOT_IN_RANGE)
                         creep.moveTo(target);
                     else {
-                        creep.moveTo(target.x - 2, target.y - 2);
+                        creep.moveTo(target.x + 2, target.y);
                         //creep.say('🔧: ' + target.hits);
                     }
                 } else {

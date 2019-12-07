@@ -1,6 +1,3 @@
-
-
-
 // require staff
 let creep_call = require('callcreeps');
 let sM = require('MainPerSpawn');

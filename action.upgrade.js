@@ -20,7 +20,7 @@ let upgrade = {
                 //creep.say('🔝')
             } else {
                 //Memory.stats.push("else: " + (Game.cpu.getUsed() - c_this) );c_this = Game.cpu.getUsed();
-                creep.moveTo(creep.room.controller/*, {visualizePathStyle: {stroke: '#ceff01'}}*/);
+                creep.moveTo(creep.room.controller.x + 2,creep.room.controller.y /*, {visualizePathStyle: {stroke: '#ceff01'}}*/);
 
 
                 if (!creep.memory._count) creep.memory._count = 1; else {

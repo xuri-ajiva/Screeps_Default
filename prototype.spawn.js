@@ -19,6 +19,9 @@ module.exports = function () {
         if (energy < 200) return undefined;
         let newName = action + Game.time;
         let body = CreateBody2(energy, action);
+        console.log(JSON.stringify(body));
+        if (body.length === 0) return undefined;
+
         if (_Memory) {
             let memory = Object.assign({}, {action: action}, _Memory);
             console.log('*: ' + newName + ' =>' + this.spawnCreep(body, newName, {
@@ -57,7 +60,7 @@ module.exports = function () {
             case SPAWNHELPER:
                 return global2(200, 800, energy, [MOVE, CARRY], [WORK]); //done
             case ATTACKE:
-                return global2(200, 500, energy, [ATTACK, MOVE, TOUGH,TOUGH]); //done
+                return global2(200, 500, energy, [ATTACK, MOVE, TOUGH, TOUGH]); //done
             default:
                 console.log('⚠: Unknown Action Pleas Configure: action.' + action);
                 break;
@@ -105,7 +108,8 @@ module.exports = function () {
         }
 
         if (cost > energy) return;
-        let parts = (energy / cost); //parts <- body parts all cost
+        let parts = Math.floor(energy / cost); //parts <- body parts all cost
+        console.log('🎟: '+parts);
 
         for (let s in bodyS) {
             for (let i = 0; i < parts; i++) {

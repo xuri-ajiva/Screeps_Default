@@ -1,5 +1,3 @@
-
-
 let defend = require('defend');
 
 let summoner = require('spawer');
@@ -8,6 +6,10 @@ let creep_call = require('callcreeps');
 require('prototype.spawn')();
 
 module.exports = function (spawn) {
+    //let s = require('action.spawnhelper' );
+    //s.detectPos(undefined,spawn);
+    //s.Build(undefined, spawn, false);
+
     spawn.memory.stats = [];
     spawn.memory.stats.push("0: " + Game.cpu.getUsed().toFixed(4));
     let c_this = Game.cpu.getUsed();
@@ -19,8 +21,8 @@ module.exports = function (spawn) {
     spawn.memory.stats.push("defend: " + (Game.cpu.getUsed() - c_this).toFixed(4));
     c_this = Game.cpu.getUsed();
 
-    if (Game.time % 255 === 0 || Memory.up) {
-        Memory.up = false;
+    if (Game.time % 255 === 0 || Memory.up > 0) {
+        Memory.up--;
         console.log('🈴: ' + Game.time);
         spawn.memory.init = spawn.room.controller.level;
         summoner.Init(spawn);
@@ -39,7 +41,7 @@ module.exports = function (spawn) {
     ///Game.spawns['Spawn1'].spawnCreep([MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,ATTACK,CARRY], '_test', {memory: {action: 'ctf'}})
     //Game.spawns['Spawn1'].spawnCreep([MOVE,CARRY,WORK,ATTACK], '_test', {memory: {action: 'ctf'}})
 
-
+    //Game.spawns['Spawn1'].spawnCreep([MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL], '_test'+ Game.time, {memory: {action: 'ctf'}})
     /*if (false) {
         Game.spawns['Spawn1'].createCreep([MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, WORK, WORK, WORK], '_claim', {
             global: {
