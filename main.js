@@ -20,7 +20,10 @@ module.exports.loop = function () {
         l++;
         //links
         links.check(Game.spawns[sp].room);
+        //test.createWalls(Game.spawns[sp].room);
     }
+
+
 
     //check my invation
     /*if (c < 3 && l < 2) Game.spawns['Spawn1'].createCreep([MOVE, MOVE, MOVE, MOVE, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, WORK, WORK, WORK], 'claim' + Game.time, {
@@ -30,6 +33,13 @@ module.exports.loop = function () {
         }
     });*/
 
+
+
+    for (let name in Memory.creeps)
+        if (!Game.creeps[name]) {
+            delete Memory.creeps[name];
+            //console.log('✝: ' + name);
+        }
 
 };
 

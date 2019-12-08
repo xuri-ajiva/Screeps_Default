@@ -49,7 +49,7 @@ module.exports = {
 
         //if(creep.body.includes(HEAL)){
         if (creep.hits < creep.hitsMax) {
-            creep.say('🩸');
+            creep.say('🩸',true);
             creep.heal(creep);
         }
         //}
@@ -79,7 +79,7 @@ module.exports = {
                             creep.memory.target = Memory.target;
 
 
-                        let tanks = creep.room.find(FIND_STRUCTURES, {filter: (s) => (s.structureType === STRUCTURE_SPAWN || s.structureType === STRUCTURE_CONTAINER || s.structureType === STRUCTURE_EXTENSION) && s.store[RESOURCE_ENERGY] > 0 && !s.my});
+                        let tanks = creep.room.find(FIND_STRUCTURES, {filter: (s) => s.structureType !== STRUCTURE_EXTENSION && (s.store) && s.store[RESOURCE_ENERGY] && s.store[RESOURCE_ENERGY] > 0 && !s.my});
                         creep.say(tanks.length + '🎟', true);
                         if (tanks.length) {
                             creep.memory.target = tanks[0].id;
@@ -89,6 +89,7 @@ module.exports = {
                         }
                         break;
                     case 2:
+                        //creep.memory.init = 5;
                         if (creep.store.getFreeCapacity() === 0 || creep.lifetime < 750) {
                             creep.memory.init = 5;
                             creep.say('full: ' + creep.store[RESOURCE_ENERGY]);
@@ -100,7 +101,8 @@ module.exports = {
                                 for (let rs in RESOURCES_ALL)
                                     switch (creep.withdraw(r, RESOURCES_ALL[rs])) {
                                         case ERR_NOT_IN_RANGE:
-                                            creep.moveTo(r);
+                                            //creep.say('',true);
+                                            creep.moveTo(r.pos.x,r.pos.y);
                                             return;
                                         case OK:
                                             creep.attack(r);
@@ -123,8 +125,9 @@ module.exports = {
                         creep.drop(RESOURCE_ENERGY);
                         break;
                     case 5:
+                        //Game.getObjectById(creep.memory.spawn).recycleCreep(creep);
                         creep.moveTo(Game.getObjectById(creep.memory.spawn));
-                        if (creep.room.roomName === Game.getObjectById(creep.memory.spawn).room.roomName) {
+                        if (creep.room === Game.getObjectById(creep.memory.spawn).room) {
                             creep.memory.init = 6;
                             delete creep.memory.target;
                             let renewer = require('special.renew');
@@ -132,7 +135,8 @@ module.exports = {
                         }
                         break;
                     case 6:
-                        creep.say('6')
+                        //creep.memory.init = 5;
+                        creep.say('6: ' + Game.getObjectById(creep.memory.spawn).room);
                         let carry = require('action.carry');
                         carry.DeliverEnergy(creep, Game.getObjectById(creep.memory.spawn));
                         if (creep.store[RESOURCE_ENERGY] === 0) {

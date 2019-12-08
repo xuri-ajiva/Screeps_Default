@@ -42,6 +42,7 @@ module.exports = function (spawn) {
     //Game.spawns['Spawn1'].spawnCreep([MOVE,CARRY,WORK,ATTACK], '_test', {memory: {action: 'ctf'}})
 
     //Game.spawns['Spawn1'].spawnCreep([MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL], '_test'+ Game.time, {memory: {action: 'ctf'}})
+    //Game.spawns['Spawn1'].spawnCreep([MOVE,MOVE,MOVE,CARRY,CARRY,CARRY], '_test'+ Game.time, {memory: {action: 'ctf'}})
     /*if (false) {
         Game.spawns['Spawn1'].createCreep([MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, WORK, WORK, WORK], '_claim', {
             global: {
