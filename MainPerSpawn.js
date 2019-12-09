@@ -16,7 +16,7 @@ module.exports = function (spawn) {
 
     spawn.memory.stats.push("init: " + (Game.cpu.getUsed() - c_this).toFixed(4));
     c_this = Game.cpu.getUsed();
-    defend.run(spawn.room);
+    defend.run(spawn.room,spawn);
 
     spawn.memory.stats.push("defend: " + (Game.cpu.getUsed() - c_this).toFixed(4));
     c_this = Game.cpu.getUsed();

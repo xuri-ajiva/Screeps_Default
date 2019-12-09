@@ -5,32 +5,22 @@ let repair = {
     run: function (creep, spw) {
         //creep.say('⬇');
 
-        if (!creep.spawning && creep.store[RESOURCE_ENERGY] === 0) {
-            if (!creep.memory._count)
-                creep.memory._count = 1; else {
-                if (creep.memory._count > 100) {
-                    if (!spw.memory.pets.includes(creep.id))
-                        spw.memory.need_energy.push(creep.id);
-                    creep.memory._count = 0;
-                }
-                creep.memory._count += 1;
-            }
-
-            return;
-        }
         // creep.memory.init = 0;
         // delete creep.memory.targets
         // delete creep.memory.target;
+
+        if (creep.spawning) return;
+
         switch (creep.memory.init) {
-            case  0:
-                creep.memory.init = 1;
+            case 0:
+                if (creep.store[RESOURCE_ENERGY] === 0) creep.memory.init = 1;
+                else creep.memory.init = 2;
                 break;
-            case  1:
-                creep.memory.init = 2;
-                creep.moveTo(spw.pos.x - 5, spw.pos.y - 5);
-            //break;
-            case  2:
-                //if (creep.memory.targets.length > 0) {
+            case 1:
+                let carry = require('action.carry');
+                carry.GetEnergy(creep, spw, true);
+                break;
+            case 2:
                 if (creep.memory.target === undefined) {
                     let need_repair = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: object => ((object.hits < max_hits) && (object.hits < object.hitsMax))});
 
@@ -42,11 +32,8 @@ let repair = {
                     delete creep.memory.target;
                 }
                 creep.memory.init = 3;
-                //} else {
-                //creep.memory.init = 1;
                 break;
-            //}
-            case  3:
+            case 3:
                 let target = Game.getObjectById(creep.memory.target);
                 if (target !== undefined && target !== null && (target.hits !== target.hitsMax && target.hits < max_hits)) {
                     if (creep.repair(target) === ERR_NOT_IN_RANGE)
@@ -60,10 +47,13 @@ let repair = {
                     creep.memory.init = 2;
                 }
                 break;
+
             default:
                 creep.memory.init = 0;
-                break
+                break;
         }
+        if (creep.store[RESOURCE_ENERGY] === 0) creep.memory.init = 1;
+        if (creep.store.getFreeCapacity(RESOURCE_ENERGY) === 0 && creep.memory.init === 1) creep.memory.init = 2;
     },
 
     recycle: function (creep, spw) {

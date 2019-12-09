@@ -68,7 +68,7 @@ module.exports = {
                         break;
                     case CARRYER:
                         carry.run(creep, spawn);
-                        //if (vs) vs.text('🧰', creep.pos);
+                        if (vs) vs.text('🧰', creep.pos);
                         break;
                     case REPAIR:
                         repair.run(creep, spawn);

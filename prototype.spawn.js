@@ -19,7 +19,7 @@ module.exports = function () {
         if (energy < 200) return undefined;
         let newName = action + Game.time;
         let body = CreateBody2(energy, action);
-        console.log(JSON.stringify(body));
+        //console.log(JSON.stringify(body));
         if (body.length === 0) return undefined;
 
         if (_Memory) {
@@ -60,7 +60,7 @@ module.exports = function () {
             case SPAWNHELPER:
                 return global2(200, 800, energy, [MOVE, CARRY], [WORK]); //done
             case ATTACKE:
-                return global2(200, 500, energy, [ATTACK, MOVE, TOUGH, TOUGH]); //done
+                return global2(200, 500, energy, [ MOVE, TOUGH, TOUGH,ATTACK]); //done
             default:
                 console.log('⚠: Unknown Action Pleas Configure: action.' + action);
                 break;

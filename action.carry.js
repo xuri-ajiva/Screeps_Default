@@ -20,6 +20,7 @@ let carry = {
                 else {
                     this.DeliverEnergy(creep, spw);
                 }
+                break;
             case 2:
                 if (creep.memory.pet !== undefined && creep.memory.pet !== null) {
                     //creep.say(creep.memory.pet.substr(7));
@@ -94,7 +95,12 @@ let carry = {
      * @param {Boolean} container The date
      * @return {boolean}
      */
-    GetEnergy: function (creep, spw, container) {
+    GetEnergy: function (creep, spw, container,doNotGetBackInRoom) {
+        if (creep.room !== spw.room && !doNotGetBackInRoom) {
+            creep.say('fail');
+            creep.moveTo(spw);
+            return false;
+        }
         if (container) {
             let s = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: (s) => {
@@ -124,26 +130,32 @@ let carry = {
      * @param {Spawn} spw
      **/
     PickupDroppedResources: function (creep, spw) {
-        let drop = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {
-            filter: (s) => {
-                return s[RESOURCE_ENERGY] >= 50;
-            }
-        });
+        if (creep.memory._dropp === undefined) {
+            let drop = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {
+                filter: (s) => {
+                    return s[RESOURCE_ENERGY] >= 50;
+                }
+            });
 
-        var dropenergy = creep.room.find(FIND_DROPPED_RESOURCES, {
-            filter: (d) => d.amount >= 500
-        });
-        if (dropenergy.length) {
-            dropenergy.sort((a, b) => a[RESOURCE_ENERGY] - b[RESOURCE_ENERGY])
-            drop = dropenergy[0];
+            var dropenergy = creep.room.find(FIND_DROPPED_RESOURCES, {
+                filter: (d) => d.amount >= 500
+            });
+            if (dropenergy && dropenergy.length > 0) {
+                dropenergy.sort((a, b) => a[RESOURCE_ENERGY] - b[RESOURCE_ENERGY])
+                drop = dropenergy[0];
+            }
+            if (drop)
+                creep.memory._dropp = drop.id;
         }
+        let _drop = Game.getObjectById(creep.memory._dropp);
 
         //drop.sort((a,b) => a[RESOURCE_ENERGY] - b[RESOURCE_ENERGY]);
-        if (drop) {
-            if (creep.pickup(drop) == ERR_NOT_IN_RANGE) {
-                this.MoveToWhile(creep, drop);
+        if (_drop) {
+            if (creep.pickup(_drop) == ERR_NOT_IN_RANGE) {
+                this.MoveToWhile(creep, _drop);
             }// else {                creep.say('🔼');            }
         } else {
+            delete creep.memory._dropp;
             creep.moveTo(spw.pos.x - 5, spw.pos.y);
         }
     },
@@ -154,6 +166,7 @@ let carry = {
      * @return {boolean}
      */
     DeliverEnergy: function (creep, spw) {
+        creep.say('➡');
         if (creep.memory.thaget === undefined) {
             let structures = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: (structure) => {

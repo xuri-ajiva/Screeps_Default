@@ -22,11 +22,11 @@ let renew = {
                     creep.memory.renew = 2;
                 break;
             case 2:
-                if (spw.room.energyCapacityAvailable < 500) {
+                if (spw.room.energyAvailable < 500) {
                     creep.transfer(spw, RESOURCE_ENERGY);
                 }
-                let res = spw.room.energyCapacityAvailable < 500 ? spw.recycleCreep(creep) : spw.renewCreep(creep);
-
+                //let res = spw.room.energyCapacityAvailable < 500 ? spw.recycleCreep(creep) : spw.renewCreep(creep);
+                let res = spw.renewCreep(creep);
                 //creep.say('✳',true);
                 switch (res) {
                     case ERR_NOT_IN_RANGE:
