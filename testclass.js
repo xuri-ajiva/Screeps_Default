@@ -123,10 +123,11 @@ module.exports = {
         } else if (l === 2) {
             Memory.starte = 2;
         }
-        if (ctf < 10) {
-            //Game.spawns['Spawn1'].spawnCreep([CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, HEAL, HEAL, HEAL, HEAL], '_test' + Game.time, {memory: {action: 'ctf'}});
-            // Game.spawns['Spawn1'].spawnCreep([MOVE,MOVE,MOVE,CARRY,CARRY], '_ctf'+ Game.time, {memory: {action: 'ctf'}});
-        }
+        if (false)
+            if (ctf < 5) {
+                //Game.spawns['Spawn1'].spawnCreep([CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, HEAL, HEAL, HEAL, HEAL], '_test' + Game.time, {memory: {action: 'ctf'}});
+                Game.spawns['Spawn1'].spawnCreep([TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, MOVE, MOVE, MOVE, CARRY, CARRY, MOVE, CARRY], '_ctf' + Game.time, {memory: {action: 'ctf'}});
+            }
     },
 
     expald: function () {
@@ -153,7 +154,7 @@ module.exports = {
                 //console.log('on da way');
             }
         } else {
-            //console.log('nospawn')
+            delete Memory.starte;
         }
     },
 
@@ -205,8 +206,8 @@ module.exports = {
                         }
 
                     wall_at.push({
-                        x: x + (yadd * (skip / 2 -1)),
-                        y: y + (xadd * (skip / 2-1)),
+                        x: x + (yadd * (skip / 2 - 1)),
+                        y: y + (xadd * (skip / 2 - 1)),
                         xa: xadd,
                         ya: yadd,
                         q: STRUCTURE_RAMPART
@@ -253,7 +254,7 @@ module.exports = {
                 ct = '🟥';
             }
 
-            if(s === STRUCTURE_RAMPART){
+            if (s === STRUCTURE_RAMPART) {
                 ct = '🟢';
             }
 

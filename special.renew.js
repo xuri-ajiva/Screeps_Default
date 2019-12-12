@@ -1,4 +1,7 @@
 const max_hp = 2000;
+const rey_rec = 'rec';
+const rey_ren = 'ren';
+
 
 let renew = {
     /** @param {Creep} creep
@@ -11,6 +14,12 @@ let renew = {
         switch (creep.memory.renew) {
             case 0:
                 //creep.memory._beg = creep.ticksToLive;
+                if (creep.body.length < 6 && spw.room.energyAvailable > 500 && spw.room.energyAvailable >  spw.room.energyCapacityAvailable*.7) {
+                    creep.memory.rey = rey_rec;
+                    spw.memory.creeps_count_by_action[creep.memory.action]--;
+                } else {
+                    creep.memory.rey = rey_ren;
+                }
                 creep.memory.renew = 1;
                 creep.memory.path_to_spawn = creep.pos.findPathTo(spw.pos).length;
                 break;
@@ -26,7 +35,7 @@ let renew = {
                     creep.transfer(spw, RESOURCE_ENERGY);
                 }
                 //let res = spw.room.energyCapacityAvailable < 500 ? spw.recycleCreep(creep) : spw.renewCreep(creep);
-                let res = spw.renewCreep(creep);
+                let res = creep.memory.rey === rey_ren ? spw.renewCreep(creep) : spw.recycleCreep(creep);
                 //creep.say('✳',true);
                 switch (res) {
                     case ERR_NOT_IN_RANGE:
@@ -36,7 +45,7 @@ let renew = {
                         creep.memory.renew = 3;
                         break;
                     case  ERR_BUSY:
-                        creep.moveTo(spw.pos.x + 5, spw.pos.y - 5);
+                        creep.moveTo(spw.pos.x + 4, spw.pos.y - 4);
                     case ERR_NOT_ENOUGH_ENERGY:
                         if (creep.store[RESOURCE_ENERGY] > 0)
                             creep.transfer(spw, RESOURCE_ENERGY);
@@ -52,6 +61,7 @@ let renew = {
                 creep.memory.renew++;
                 break;
             case  6:
+                delete creep.memory.rey;
                 delete creep.memory._beg;
                 delete creep.memory.renew;
                 delete creep.memory.path_to_spawn;

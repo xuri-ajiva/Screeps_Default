@@ -95,7 +95,7 @@ let carry = {
      * @param {Boolean} container The date
      * @return {boolean}
      */
-    GetEnergy: function (creep, spw, container,doNotGetBackInRoom) {
+    GetEnergy: function (creep, spw, container, doNotGetBackInRoom) {
         if (creep.room !== spw.room && !doNotGetBackInRoom) {
             creep.say('fail');
             creep.moveTo(spw);
@@ -168,16 +168,48 @@ let carry = {
     DeliverEnergy: function (creep, spw) {
         creep.say('➡');
         if (creep.memory.thaget === undefined) {
-            let structures = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                filter: (structure) => {
-                    return ((structure.structureType == STRUCTURE_TOWER || structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 500)
-                        || ((structure.structureType == STRUCTURE_SPAWN/* || structure.structureType == STRUCTURE_EXTENSION*/) && structure.store.getFreeCapacity(RESOURCE_ENERGY) >= 50);
+            let strs = undefined;
+
+            let dist = 1000000;
+            let structures09894318730984298740938724987843 = creep.room.find(FIND_STRUCTURES, {filter: (s) => s.store});
+            structures09894318730984298740938724987843.sort((a, b) => a.store[RESOURCE_ENERGY] - b.store[RESOURCE_ENERGY]);
+            //let c_t = Game.cpu.getUsed();
+            for (let x in structures09894318730984298740938724987843) {
+                let s = structures09894318730984298740938724987843[x];
+                let t = s.structureType;
+                if (s.store !== undefined) {
+                    if (s.store.getFreeCapacity(RESOURCE_ENERGY) >= 50) {
+                        //console.log(t + ' : ' +s.store[RESOURCE_ENERGY] + ' / ' +s.store.getCapacity(RESOURCE_ENERGY)*.8);
+                        if (s.store[RESOURCE_ENERGY] < s.store.getCapacity(RESOURCE_ENERGY) *.8) {
+                            if (t === STRUCTURE_SPAWN) {
+                                strs = s;
+                                break;
+                            } else if (t === STRUCTURE_TOWER) {
+                                strs = s;
+                                break;
+                            }
+                        }
+
+                        if (s.store.getFreeCapacity(RESOURCE_ENERGY) >= 500) {
+                            if (t === STRUCTURE_CONTAINER || t === STRUCTURE_STORAGE) {
+                                let range = creep.pos.getRangeTo(s);
+                                if (range < dist) {
+                                    dist = range;
+                                    strs = s;
+                                }
+                            }
+                        }
+                    }
                 }
-            });
-            if (structures !== undefined && structures != null) {
-                if (structures) {
+                //if ((structure.structureType == STRUCTURE_TOWER || structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 500)
+                //            || ((structure.structureType == STRUCTURE_SPAWN/* || structure.structureType == STRUCTURE_EXTENSION*/) && structure.store.getFreeCapacity(RESOURCE_ENERGY) >= 50);
+            }
+            //console.log((Game.cpu.getUsed() - c_t));
+
+            if (strs !== undefined && strs != null) {
+                if (strs) {
                     //creep.say('📝');
-                    creep.memory.thaget = structures.id;
+                    creep.memory.thaget = strs.id;
                 } //else
                 //console.log(str);
             } else {

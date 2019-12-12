@@ -18,7 +18,7 @@ module.exports = function () {
     StructureSpawn.prototype.SpawnCustomCreep = function (energy, action, _Memory) {
         if (energy < 200) return undefined;
         let newName = action + Game.time;
-        let body = CreateBody2(energy, action);
+        let body = CreateBody(energy, action);
         //console.log(JSON.stringify(body));
         if (body.length === 0) return undefined;
 
@@ -34,7 +34,6 @@ module.exports = function () {
             //console.log(str); // Logs output to dev tools console.
             console.log('* -: ' + newName + ' =>' + this.spawnCreep(body, newName, {memory: {action: action}}));
         }
-        console.log('Spawning: ' + newName);
         return newName;
     };
 
@@ -43,24 +42,24 @@ module.exports = function () {
      * @param {Number} energy
      * @param {String} action
      **/
-    let CreateBody2 = function (energy, action) {
+    let CreateBody = function (energy, action) {
         switch (action) {
             case MINER:
-                return global2(150, 550, energy, [WORK, MOVE], energy > 300 ? [WORK] : undefined); //done
+                return global(150, 550, energy, [WORK, MOVE], energy > 300 ? [WORK] : undefined); //done
             case BUILDER:
-                return global2(300, 600, energy, [WORK, CARRY, WORK, MOVE]); //done
+                return global(300, 600, energy, [WORK, CARRY, WORK, MOVE]); //done
             case UPGRADE:
-                return global2(200, 400, energy, [WORK, MOVE, CARRY], energy > 300 ? [WORK] : undefined); //done
+                return global(200, 400, energy, [WORK, MOVE, CARRY], energy > 300 ? [WORK] : undefined); //done
             case CARRYER:
-                return global2(100, 400, energy, [MOVE, CARRY]); //done
+                return global(100, 400, energy, [MOVE, CARRY]); //done
             case REPAIR:
-                return global2(200, 500, energy, [WORK, MOVE, CARRY], energy > 300 ? [WORK] : undefined); //done
+                return global(200, 500, energy, [WORK, MOVE, CARRY], energy > 300 ? [WORK] : undefined); //done
             case LOOTER:
-                return global2(200, 300, energy, [MOVE, CARRY], energy > 300 ? [MOVE] : undefined); //done
+                return global(200, 300, energy, [MOVE, CARRY], energy > 300 ? [MOVE] : undefined); //done
             case SPAWNHELPER:
-                return global2(200, 800, energy, [MOVE, CARRY], [WORK]); //done
+                return global(200, 800, energy, [MOVE, CARRY], [WORK]); //done
             case ATTACKE:
-                return global2(200, 500, energy, [ MOVE, TOUGH, TOUGH,ATTACK]); //done
+                return global(200, 500, energy, [ MOVE, TOUGH, TOUGH,ATTACK]); //done
             default:
                 console.log('⚠: Unknown Action Pleas Configure: action.' + action);
                 break;
@@ -84,7 +83,7 @@ module.exports = function () {
      * @param {Array} add_final
      * @description bodyS: [MOVE,CARRY ...]\n add_final: [MOVE,CARRY ...] will always be added on top of balanced
      */
-    let global2 = function (min_energy, max_energy, energy, bodyS, add_final) {
+    let global = function (min_energy, max_energy, energy, bodyS, add_final) {
         if (energy < min_energy) return [];
         if (energy > max_energy) energy = max_energy;
 
@@ -109,7 +108,7 @@ module.exports = function () {
 
         if (cost > energy) return;
         let parts = Math.floor(energy / cost); //parts <- body parts all cost
-        console.log('🎟: '+parts);
+        //console.log('🎟: '+parts);
 
         for (let s in bodyS) {
             for (let i = 0; i < parts; i++) {

@@ -10,16 +10,18 @@ module.exports = function (spawn) {
     //s.detectPos(undefined,spawn);
     //s.Build(undefined, spawn, false);
 
+    let c_this = Game.cpu.getUsed();
+    spawn.memory.stats.push("defend: " + (Game.cpu.getUsed() - c_this).toFixed(4));
+    defend.run(spawn.room,spawn);
+    c_this = Game.cpu.getUsed();
+
     spawn.memory.stats = [];
     spawn.memory.stats.push("0: " + Game.cpu.getUsed().toFixed(4));
-    let c_this = Game.cpu.getUsed();
 
     spawn.memory.stats.push("init: " + (Game.cpu.getUsed() - c_this).toFixed(4));
     c_this = Game.cpu.getUsed();
-    defend.run(spawn.room,spawn);
 
-    spawn.memory.stats.push("defend: " + (Game.cpu.getUsed() - c_this).toFixed(4));
-    c_this = Game.cpu.getUsed();
+
 
     if (Game.time % 255 === 0 || Memory.up > 0) {
         Memory.up--;

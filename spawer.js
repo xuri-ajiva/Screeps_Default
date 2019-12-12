@@ -41,7 +41,7 @@ module.exports = {
             let creep = creeps[it];
             spw.memory.creeps_count_by_action[creep.memory.action] += 1;
         }
-        console.log(spw.memory.creeps_count_by_action[SPAWNHELPER]);
+        //console.log(spw.memory.creeps_count_by_action[SPAWNHELPER]);
 
 
         // let towers = spw.room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
@@ -77,28 +77,20 @@ module.exports = {
             case 0:
                 let s = require('action.' + SPAWNHELPER);
                 s.detectPos(undefined, spw);
-                console.log('INIT: ' + spw.memory.init);
                 break;
             case 1:
-                console.log('INIT: ' + spw.memory.init);
                 break;
             case 2:
-                console.log('INIT: ' + spw.memory.init);
                 break;
             case 3:
-                console.log('INIT: ' + spw.memory.init);
                 break;
             case 4:
-                console.log('INIT: ' + spw.memory.init);
                 break;
             case 5:
-                console.log('INIT: ' + spw.memory.init);
                 break;
             case 6:
-                console.log('INIT: ' + spw.memory.init);
                 break;
             case 7:
-                console.log('INIT: ' + spw.memory.init);
                 break;
             default:
                 spw.memory.init = 0;
@@ -112,13 +104,15 @@ module.exports = {
                 spw.memory.need_energy.push(c.id);
             }
         }
-        for (let name in spw.memory.creeps)
+
+        for (let name in spw.memory.creeps) {
             if (!Game.creeps[name]) {
                 if (name.includes('attack'))
                     spw.memory.creeps_count_by_action[ATTACKE] -= 1;
                 delete spw.memory.creeps[name];
                 console.log('✝: ' + name);
             }
+        }
 
         let carryers = _.filter(Game.creeps, (creep) => creep.memory.action === CARRYER && creep.memory.pet != null);
         spw.memory.pets = _.map(carryers, function (s) {
@@ -155,7 +149,7 @@ module.exports = {
             } else if (c_SPAENHELPER < SPAENHELPERS && spw.room.energyCapacityAvailable > 300) {
                 let name = spw.SpawnCustomCreep(energy, SPAWNHELPER);
                 spw.memory.creeps_count_by_action[SPAWNHELPER] += 1;
-            }  else if (spw.room.find(FIND_CONSTRUCTION_SITES).length > 0 && c_BUILDER < BUILDERS) {
+            } else if (spw.room.find(FIND_CONSTRUCTION_SITES).length > 0 && c_BUILDER < BUILDERS) {
                 if (energy < 300) return;
                 let name = spw.SpawnCustomCreep(energy, BUILDER);
                 spw.memory.creeps_count_by_action[BUILDER] += 1;

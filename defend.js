@@ -13,8 +13,8 @@ let tower = {
 
             let c_ATTACKER = spw.memory.creeps_count_by_action['attack'];
             if (c_ATTACKER < 4) {
-               spw.SpawnCustomCreep(energy, ATTACKE);
-               spw.memory.creeps_count_by_action[ATTACKE] += 1;
+               spw.SpawnCustomCreep(spw.room.energyAvailable, 'attack');
+               spw.memory.creeps_count_by_action['attack'] += 1;
            }
 
 

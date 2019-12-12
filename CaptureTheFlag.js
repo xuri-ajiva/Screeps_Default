@@ -47,9 +47,14 @@ module.exports = {
     move(creep) {
         let flag = Game.flags['Flag1'];
 
+        if (flag === undefined) {
+            require('special.renew').recycle(creep, Game.getObjectById(creep.memory.spawn));
+            return;
+        }
+
         //if(creep.body.includes(HEAL)){
         if (creep.hits < creep.hitsMax) {
-            creep.say('🩸',true);
+            creep.say('🩸', true);
             creep.heal(creep);
         }
         //}
@@ -102,7 +107,7 @@ module.exports = {
                                     switch (creep.withdraw(r, RESOURCES_ALL[rs])) {
                                         case ERR_NOT_IN_RANGE:
                                             //creep.say('',true);
-                                            creep.moveTo(r.pos.x,r.pos.y);
+                                            creep.moveTo(r.pos.x, r.pos.y);
                                             return;
                                         case OK:
                                             creep.attack(r);
