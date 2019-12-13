@@ -1,4 +1,4 @@
-let defend = require('defend');
+let defend = require('spawn.defend');
 
 let summoner = require('spawer');
 let creep_call = require('callcreeps');
@@ -12,7 +12,7 @@ module.exports = function (spawn) {
 
     let c_this = Game.cpu.getUsed();
     spawn.memory.stats.push("defend: " + (Game.cpu.getUsed() - c_this).toFixed(4));
-    defend.run(spawn.room,spawn);
+    defend.run(spawn.room, spawn);
     c_this = Game.cpu.getUsed();
 
     spawn.memory.stats = [];
@@ -20,7 +20,6 @@ module.exports = function (spawn) {
 
     spawn.memory.stats.push("init: " + (Game.cpu.getUsed() - c_this).toFixed(4));
     c_this = Game.cpu.getUsed();
-
 
 
     if (Game.time % 255 === 0 || Memory.up > 0) {

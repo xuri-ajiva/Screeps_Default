@@ -32,10 +32,10 @@ let architect = {
                             }
                         });
 
-                       //// Avoid creeps in the room
-                       //room.find(FIND_CREEPS).forEach(function(creep) {
-                       //    costs.set(creep.pos.x, creep.pos.y, 0xff);
-                       //});
+                        //// Avoid creeps in the room
+                        //room.find(FIND_CREEPS).forEach(function(creep) {
+                        //    costs.set(creep.pos.x, creep.pos.y, 0xff);
+                        //});
 
                         return costs;
                     },
@@ -51,9 +51,9 @@ let architect = {
 
         let places = [];
         for (let j = -3; j < 4; j++)
-            for (let k = -3; k < 4; k++){
-                if(Math.abs(j) === 3 && Math.abs(k) === 2 || Math.abs(j) === 2 && Math.abs(k) === 3){
-                    places.push( {x: j, y: k});
+            for (let k = -3; k < 4; k++) {
+                if (Math.abs(j) === 3 && Math.abs(k) === 2 || Math.abs(j) === 2 && Math.abs(k) === 3) {
+                    places.push({x: j, y: k});
                 }
             }
 
