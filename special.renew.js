@@ -13,8 +13,12 @@ let renew = {
 
         switch (creep.memory.renew) {
             case 0:
-                //creep.memory._beg = creep.ticksToLive;
-                if (creep.body.length < 6 && spw.room.energyAvailable > 500 && spw.room.energyAvailable >  spw.room.energyCapacityAvailable*.7) {
+                if (creep.memory.action === 'attack') {
+                    if (creep.room.find(FIND_HOSTILE_CREEPS).length === 0) {
+                        creep.memory.rey = rey_rec;
+                        spw.memory.creeps_count_by_action[creep.memory.action]--;
+                    }
+                } else if (creep.body.length < 6 && spw.room.energyAvailable > 500 && spw.room.energyAvailable > spw.room.energyCapacityAvailable * .7) {
                     creep.memory.rey = rey_rec;
                     spw.memory.creeps_count_by_action[creep.memory.action]--;
                 } else {
@@ -62,7 +66,6 @@ let renew = {
                 break;
             case  6:
                 delete creep.memory.rey;
-                delete creep.memory._beg;
                 delete creep.memory.renew;
                 delete creep.memory.path_to_spawn;
                 delete creep.memory.renew;

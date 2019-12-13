@@ -22,12 +22,17 @@ let repair = {
                 break;
             case 2:
                 if (creep.memory.target === undefined) {
-                    let need_repair = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: object => ((object.hits < max_hits) && (object.hits < object.hitsMax))});
-
-                    if (need_repair)
-                        creep.memory.target = need_repair.id;
-                    else
-                        creep.moveTo(spw.pos.x - 5, spw.pos.y - 5);
+                    let need_repair = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: o => (o.hits*1.2  < o.hitsMax*.9 && o.hits*1.2  < max_hits)});
+                    //creep.say(1)
+                    if (need_repair){
+                        //console.log(need_repair.hitsMax + ' : ' + need_repair.hits + ' : ' + );
+                        //creep.say(need_repair.pos.x +' : '+ need_repair.pos.y);
+                        creep.memory.target = need_repair.id;}
+                    else {
+                        require('action.upgrade').run(creep,spw);
+                        //creep.moveTo(spw.pos.x - 5, spw.pos.y - 5);
+                        break;
+                    }
                 } else {
                     delete creep.memory.target;
                 }
