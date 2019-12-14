@@ -1,9 +1,6 @@
 let architect = {
-    /** @param {Number} coreLevel
-     *  @param {Spawn} spw
-     **/
-    run: function (coreLevel, spw) {
 
+    findPath: function (coreLevel, spw, ignore_creeps) {
         let begin = spw.pos;
 
 
@@ -32,10 +29,11 @@ let architect = {
                             }
                         });
 
-                        //// Avoid creeps in the room
-                        //room.find(FIND_CREEPS).forEach(function(creep) {
-                        //    costs.set(creep.pos.x, creep.pos.y, 0xff);
-                        //});
+                        // Avoid creeps in the room
+                        if (!ignore_creeps)
+                            room.find(FIND_CREEPS).forEach(function (creep) {
+                                costs.set(creep.pos.x, creep.pos.y, 0xff);
+                            });
 
                         return costs;
                     },
@@ -43,6 +41,15 @@ let architect = {
             );
             fin.push(ret.path);
         }
+        return fin;
+    },
+
+    /** @param {Number} coreLevel
+     *  @param {Spawn} spw
+     **/
+    run: function (coreLevel, spw) {
+
+        let fin = this.findPath(coreLevel,spw,false);
 
         for (let g in fin)
             for (let p in fin[g]) {

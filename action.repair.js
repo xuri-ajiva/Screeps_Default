@@ -1,13 +1,29 @@
 const max_hits = 100000;
 let repair = {
+
+    repairRoads: function (spw, room) {
+        let road = room.find(FIND_STRUCTURES, {filter: o => (o.hits * 1.2 < o.hitsMax * .9 && o.hits * 1.2 < max_hits) && o.structureType === STRUCTURE_ROAD});
+
+        if (spw.memory.paths) {
+            if (road.length > 0) {
+                for (let ro in road) {
+                    if (spw.memory.paths.includes(road[ro].pos)) {
+                        return road[ro].id;
+                    }
+                }
+            } else
+                return undefined;
+        } else return road[0].id;
+    },
+
     /** @param {Creep} creep
      **/
     run: function (creep, spw) {
         //creep.say('⬇');
 
         // creep.memory.init = 0;
-        // delete creep.memory.targets
-        // delete creep.memory.target;
+        // delete creep.memory.target_rs
+        // delete creep.memory.target_r;
 
         if (creep.spawning) return;
 
@@ -21,34 +37,39 @@ let repair = {
                 carry.GetEnergy(creep, spw, true);
                 break;
             case 2:
-                if (creep.memory.target === undefined) {
-                    let need_repair = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: o => (o.hits*1.2  < o.hitsMax*.9 && o.hits*1.2  < max_hits)});
+                if (creep.memory.target_r === undefined) {
+                    let need_repair = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: o => (o.hits * 1.2 < o.hitsMax * .9 && o.hits * 1.2 < max_hits) && o.structureType !== STRUCTURE_ROAD});
                     //creep.say(1)
-                    if (need_repair){
+                    if (need_repair) {
                         //console.log(need_repair.hitsMax + ' : ' + need_repair.hits + ' : ' + );
                         //creep.say(need_repair.pos.x +' : '+ need_repair.pos.y);
-                        creep.memory.target = need_repair.id;}
-                    else {
-                        require('action.upgrade').run(creep,spw);
-                        //creep.moveTo(spw.pos.x - 5, spw.pos.y - 5);
-                        break;
+                        creep.memory.target_r = need_repair.id;
+                    } else {
+                        let rep = this.repairRoads(spw, creep.room);
+                        if (rep !== undefined) {
+                            creep.memory.target_r = rep.id;
+                        } else {
+                            require('action.upgrade').run(creep, spw);
+                            //creep.moveTo(spw.pos.x - 5, spw.pos.y - 5);
+                            break;
+                        }
                     }
                 } else {
-                    delete creep.memory.target;
+                    delete creep.memory.target_r;
                 }
                 creep.memory.init = 3;
                 break;
             case 3:
-                let target = Game.getObjectById(creep.memory.target);
-                if (target !== undefined && target !== null && (target.hits !== target.hitsMax && target.hits < max_hits)) {
-                    if (creep.repair(target) === ERR_NOT_IN_RANGE)
-                        creep.moveTo(target);
+                let target_r = Game.getObjectById(creep.memory.target_r);
+                if (target_r !== undefined && target_r !== null && (target_r.hits !== target_r.hitsMax && target_r.hits < max_hits)) {
+                    if (creep.repair(target_r) === ERR_NOT_IN_RANGE)
+                        creep.moveTo(target_r);
                     else {
-                        creep.moveTo(target.x + 2, target.y);
-                        //creep.say('🔧: ' + target.hits);
+                        creep.moveTo(target_r.x + 2, target_r.y);
+                        //creep.say('🔧: ' + target_r.hits);
                     }
                 } else {
-                    delete creep.memory.target;
+                    delete creep.memory.target_r;
                     creep.memory.init = 2;
                 }
                 break;
