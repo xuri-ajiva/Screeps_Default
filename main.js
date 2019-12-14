@@ -1,6 +1,6 @@
 // require staff
 let creep_call = require('callcreeps');
-let sM = require('MainPerSpawn');
+let sM = require('spawn.mainLoop');
 let test = require('testclass');
 let links = require('structure.link');
 
@@ -9,8 +9,6 @@ module.exports.loop = function () {
     test.test1();
     test.expald();
 
-    //Call creeps actions
-    creep_call.call();
 
     //call all spawns
     let l = 0;
@@ -24,6 +22,8 @@ module.exports.loop = function () {
     }
 
 
+    //Call creeps actions
+    creep_call.call();
 
     //check my invation
     /*if (c < 3 && l < 2) Game.spawns['Spawn1'].createCreep([MOVE, MOVE, MOVE, MOVE, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, WORK, WORK, WORK], 'claim' + Game.time, {

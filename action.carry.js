@@ -95,12 +95,13 @@ let carry = {
      * @param {Boolean} container The date
      * @return {boolean}
      */
-    GetEnergy: function (creep, spw, container, doNotGetBackInRoom) {
+    GetEnergy: function (creep, spw, container, doNotGetBackInRoom, no_pickup) {
         if (creep.room !== spw.room && !doNotGetBackInRoom) {
             creep.say('fail');
             creep.moveTo(spw);
             return false;
         }
+
         if (container) {
             let s = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: (s) => {
@@ -108,6 +109,7 @@ let carry = {
                         && s.store[RESOURCE_ENERGY] > 0 && s.id !== creep.memory.pet;
                 }
             });
+
             if (s) {
                 if (creep.withdraw(s, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     this.MoveToWhile(creep, s);
@@ -116,7 +118,8 @@ let carry = {
                     //creep.say('♒');
                     return true;
                 }
-            } else {
+
+            } else if(!no_pickup) {
                 this.PickupDroppedResources(creep, spw);
                 return false;
             }
@@ -130,6 +133,7 @@ let carry = {
      * @param {Spawn} spw
      **/
     PickupDroppedResources: function (creep, spw) {
+
         if (creep.memory._dropp === undefined) {
             let drop = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {
                 filter: (s) => {
@@ -147,6 +151,7 @@ let carry = {
             if (drop)
                 creep.memory._dropp = drop.id;
         }
+
         let _drop = Game.getObjectById(creep.memory._dropp);
 
         //drop.sort((a,b) => a[RESOURCE_ENERGY] - b[RESOURCE_ENERGY]);
@@ -156,7 +161,9 @@ let carry = {
             }// else {                creep.say('🔼');            }
         } else {
             delete creep.memory._dropp;
-            creep.moveTo(spw.pos.x - 5, spw.pos.y);
+            //creep.say('💌');
+            //creep.moveTo(spw.pos.x - 5, spw.pos.y);
+            this.GetEnergy(creep,spw,true,undefined,true);
         }
     },
 

@@ -19,8 +19,19 @@ module.exports = {
         // spw.memory.VIP = [];
         // let towers = room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
         // towers.forEach(tower => spw.memory.VIP.push(tower.id));
-        let architect = require(ARCHITECT);
+        let architect = require('special.architect');
         architect.run(spw.memory.init, spw);
+        spw.memory.paths = []
+
+
+        let pathsSeg =architect.findPath(spw.memory.init,spw, true);
+        for (let ps in pathsSeg){
+            for (let psx in pathsSeg[ps]){
+                spw.memory.paths.push(pathsSeg[ps][psx]);
+            }
+        }
+
+
         if (spw.memory.need_energy === undefined)
             spw.memory.need_energy = [];
         if (spw.memory.query === undefined)
@@ -36,6 +47,7 @@ module.exports = {
             spawnhelper: 0,
             attack: 0
         };
+
         let creeps = spw.room.find(FIND_MY_CREEPS);
         for (let it in creeps) {
             let creep = creeps[it];
@@ -43,12 +55,11 @@ module.exports = {
         }
         //console.log(spw.memory.creeps_count_by_action[SPAWNHELPER]);
 
-
-        // let towers = spw.room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
-        // towers.forEach((tower) => {
-        //     if (!spw.memory.pets.includes(tower.id))
-        //         spw.memory.need_energy.push(tower.id);
-        // });
+        for (let r in spw.energy_sources) {
+            for (let s in spw.energy_sources) {
+                if(spw.energy_sources[r] < 1){}
+            }
+        }
 
         let carryers = _.filter(Game.creeps, (creep) => creep.memory.action === CARRYER && creep.memory.pet != null);
         let pets = [];
@@ -137,7 +148,7 @@ module.exports = {
 
 
             if (energy < 200) return;
-            if (c_MINER < MINERS) {
+            if (c_MINER < MINERS && CARRYERS > 0) {
                 let name = spw.SpawnCustomCreep(energy, MINER);
                 spw.memory.creeps_count_by_action[MINER] += 1;
             } else if (c_CARRYER < CARRYERS) {
