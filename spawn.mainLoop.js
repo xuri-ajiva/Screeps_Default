@@ -6,8 +6,12 @@ let creep_call = require('callcreeps');
 require('prototype.spawn')();
 
 module.exports = function (spawn) {
-    spawn.memory.stats = [];
+    //let t = spawn.room.find(FIND_MY_CONSTRUCTION_SITES);
+    //for (const i in t) {
+    //    t[i].remove();
+    //}
 
+    spawn.memory.stats = [];
     spawn.memory.stats.push("0: " + Game.cpu.getUsed().toFixed(4));
     //let s = require('action.spawnhelper' );
     //s.detectPos(undefined,spawn);
@@ -30,7 +34,7 @@ module.exports = function (spawn) {
         Memory.up--;
         console.log('🈴: ' + Game.time);
         spawn.memory.init = spawn.room.controller.level;
-        summoner.Init(spawn);
+        require('Init').Init(spawn);
     }
     spawn.memory.stats.push('mod: ' + (Game.cpu.getUsed() - c_this).toFixed(4));
 

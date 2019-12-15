@@ -24,8 +24,6 @@ let ctf = require(act + CTF);
 let renewer = require('special.' + RENEW);
 
 module.exports = {
-
-
     call: function () {
         let co = {
             miner: [0, 0],
@@ -56,18 +54,13 @@ module.exports = {
             if (creep) {
                 //console.log(creep.name+ ': '+ creep.pos)
                 let c_this = Game.cpu.getUsed();
-                if (creep.memory.renew !== undefined) {
+                if (creep.memory.renew !== undefined || creep.ticksToLive < 100) {
                     //creep.suicide();
                     renewer.reNewCreep(creep, spawn);
                     if (vs) vs.text('🔋', creep.pos);
                     continue;
                 }
-                if (creep.ticksToLive < 100) {
-                    if (vs) vs.text('🔋', creep.pos);
-                    renewer.reNewCreep(creep, spawn);
-                    //console.log('renew: ' + creep.name);
-                    continue;
-                }
+
                 switch (creep.memory.action) {
                     case MINER:
                         if(spawn.memory.energy_sources){
@@ -111,6 +104,7 @@ module.exports = {
                     default:
                         break;
                 }
+
                 //console.log(creep.name + ': '+ (Game.cpu.getUsed() - c_this));
                 co[creep.memory.action][1]++;
                 if (co[creep.memory.action][0] < (Game.cpu.getUsed() - c_this).toFixed(4)) {
