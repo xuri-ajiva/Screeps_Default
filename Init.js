@@ -18,15 +18,15 @@ module.exports = {
         // let towers = room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
         // towers.forEach(tower => spw.memory.VIP.push(tower.id));
         let architect = require('special.architect');
-        architect.run(spw.memory.init, spw);
+        architect.run(spw.memory.init, spw,true);
 
-        spw.memory.paths = [];
-        let pathsSeg = architect.findPath(spw.memory.init, spw, true);
-        for (let ps in pathsSeg) {
-            for (let psx in pathsSeg[ps]) {
-                spw.memory.paths.push(pathsSeg[ps][psx]);
-            }
-        }
+        //spw.memory.paths = [];
+        //let pathsSeg = architect.findPath(spw.memory.init, spw, true);
+        //for (let ps in pathsSeg) {
+        //    for (let psx in pathsSeg[ps]) {
+        //        spw.memory.paths.push(pathsSeg[ps][psx]);
+        //    }
+        //}
 
 
         if (spw.memory.need_energy === undefined)

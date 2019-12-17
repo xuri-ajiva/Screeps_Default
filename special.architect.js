@@ -46,10 +46,11 @@ let architect = {
 
     /** @param {Number} coreLevel
      *  @param {Spawn} spw
+     * @param {boolean} ignore_creeps
      **/
-    run: function (coreLevel, spw) {
+    run: function (coreLevel, spw,ignore_creeps) {
 
-        let fin = this.findPath(coreLevel,spw,false);
+        let fin = this.findPath(coreLevel,spw,ignore_creeps);
 
         for (let g in fin)
             for (let p in fin[g]) {

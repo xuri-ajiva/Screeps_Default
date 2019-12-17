@@ -4,16 +4,17 @@ let repair = {
     repairRoads: function (spw, room) {
         let road = room.find(FIND_STRUCTURES, {filter: o => (o.hits * 1.2 < o.hitsMax * .9 && o.hits * 1.2 < max_hits) && o.structureType === STRUCTURE_ROAD});
 
-        if (spw.memory.paths) {
-            if (road.length > 0) {
-                for (let ro in road) {
-                    if (spw.memory.paths.includes(road[ro].pos)) {
-                        return road[ro].id;
-                    }
-                }
-            } else
-                return undefined;
-        } else return road[0].id;
+        //if (spw.memory.paths) {
+        //    if (road.length > 0) {
+        //        for (let ro in road) {
+        //            if (spw.memory.paths.includes(road[ro].pos)) {
+        //                return road[ro].id;
+        //            }
+        //        }
+        //    } else
+        //        return undefined;
+        //} else
+        return road[0].id;
     },
 
     /** @param {Creep} creep
