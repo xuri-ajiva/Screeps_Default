@@ -5,6 +5,9 @@ let test = require('testclass');
 let links = require('structure.link');
 
 module.exports.loop = function () {
+    
+    console.log(1);
+    
     //test class
     test.test1();
     test.expald();
@@ -17,8 +20,11 @@ module.exports.loop = function () {
         sM(Game.spawns[sp]);
         l++;
         //links
-        links.check(Game.spawns[sp].room);
+        //links.check(Game.spawns[sp].room);
         //test.createWalls(Game.spawns[sp].room);
+        //var ini  = require('Init');
+        //console.log(ini);
+        //ini.Init(sp);
     }
 
 

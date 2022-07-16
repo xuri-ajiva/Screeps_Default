@@ -14,7 +14,8 @@ let repair = {
         //    } else
         //        return undefined;
         //} else
-        return road[0].id;
+        if (road[0])
+            return road[0].id;
     },
 
     /** @param {Creep} creep
@@ -46,8 +47,9 @@ let repair = {
                         //creep.say(need_repair.pos.x +' : '+ need_repair.pos.y);
                         creep.memory.target_r = need_repair.id;
                     } else {
-                        let rep = this.repairRoads(spw, creep.room);
-                        if (rep !== undefined) {
+                        let rep = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: o => (o.hits * 1.2 < o.hitsMax * .9 && o.hits * 1.2 < max_hits) && o.structureType === STRUCTURE_ROAD});
+
+                        if (rep) {
                             creep.memory.target_r = rep.id;
                         } else {
                             require('action.upgrade').run(creep, spw);

@@ -133,11 +133,10 @@ let carry = {
      * @param {Spawn} spw
      **/
     PickupDroppedResources: function (creep, spw) {
-
         if (creep.memory._dropp === undefined) {
             let drop = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {
                 filter: (s) => {
-                    return s[RESOURCE_ENERGY] >= 50;
+                    return s[RESOURCE_ENERGY] >= 20;
                 }
             });
 

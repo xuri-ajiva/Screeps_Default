@@ -113,7 +113,7 @@ module.exports = {
             l++;
         }
 
-        if (Memory.starte === 1 && c < 4 && l < 3) {
+        if (false && Memory.starte === 1 && c < 4 && l < 3) {
             Game.spawns['Spawn1'].createCreep([MOVE, MOVE, MOVE, MOVE, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, WORK, WORK, WORK], 'claim' + Game.time, {
                 global: {
                     action: 'GBuildAt',
@@ -123,11 +123,15 @@ module.exports = {
         } else if (l === 2) {
             Memory.starte = 2;
         }
-        if (false)
-            if (ctf < 5) {
-                //Game.spawns['Spawn1'].spawnCreep([CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, HEAL, HEAL, HEAL, HEAL], '_test' + Game.time, {memory: {action: 'ctf'}});
-                Game.spawns['Spawn1'].spawnCreep([TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, MOVE, MOVE, MOVE, CARRY, CARRY, MOVE, CARRY], '_ctf' + Game.time, {memory: {action: 'ctf'}});
-            }
+        if (ctf < 5) {
+            Game.spawns['Spawn1'].spawnCreep([CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, HEAL, HEAL, HEAL, HEAL], '_test' + Game.time, {memory: {action: 'ctf'}});
+            
+            //if(ctf > 7)
+             //Game.spawns['Spawn1'].spawnCreep([TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, CARRY, CARRY, MOVE, CARRY, ATTACK, ATTACK, HEAL], '_ctf' + Game.time, {memory: {action: 'ctf'}});
+            //else
+            //    Game.spawns['Spawn1'].spawnCreep([TOUGH, TOUGH, MOVE,CARRY, MOVE,ATTACK], '_ctf' + Game.time, {memory: {action: 'ctf'}});
+            
+        }
     },
 
     expald: function () {

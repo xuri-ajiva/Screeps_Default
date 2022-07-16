@@ -31,7 +31,9 @@ module.exports = function (spawn) {
 
     c_this = Game.cpu.getUsed();
     if (Game.time % 255 === 0 || Memory.up > 0) {
-        Memory.up--;
+            if(Memory.up > 0) Memory.up--;
+        else
+            Memory.up = 0;
         console.log('🈴: ' + Game.time);
         spawn.memory.init = spawn.room.controller.level;
         require('Init').Init(spawn);

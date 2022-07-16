@@ -125,6 +125,8 @@ module.exports = {
                         spw.memory._extentions[0] = 2;
                         break;
                     case 2:
+                        spw.memory._extentions[0] = 3;      // -- skip dismantle
+                        break;                              // -- skip dismantle
                         let x = spw.memory._extentions[1]['x'];
                         let y = spw.memory._extentions[1]['y'];
                         for (let i = x; i <= x + size; i++) {
@@ -231,7 +233,7 @@ module.exports = {
                                     let dist_2 = iGameDistCheck ? spw.room.controller.pos.getRangeTo(x + t_size, y + t_size) : Math.sqrt(Math.pow(spw.room.controller.y - (y + t_size), 2) + Math.pow((spw.room.controller.x - (x + t_size)), 2));
                                     dist_n = dist_2 < dist_n ? dist_2 : dist_n;
 
-                                    visual.text(dist_n.toFixed(0), (x+h_size), (y+h_size) );
+                                    visual.text(dist_n.toFixed(0), (x + h_size), (y + h_size));
 
                                     //visual.rect(px, py, size, size, {
                                     //    strokeWidth: .1,

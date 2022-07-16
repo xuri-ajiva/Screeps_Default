@@ -18,7 +18,7 @@ let tower = {
             }
 
 
-        } else {
+        } else if(spw.memory.creeps_count_by_action) {
             if (spw.memory.creeps_count_by_action['attack'] > 0) {
                 for (let c in Game.creeps) {
                     if (Game.creeps[c].memory.action === 'attack') {

@@ -7,6 +7,10 @@ let upgrade = {
         //creep.say('⬇');
         //creep.store.energy = 0;
         if (creep.spawning) return;
+        if(creep.room.controller.level == 8 && creep.room.controller.ticksToDowngrade >= 100000){
+            creep.moveTo(spw.pos.x, spw.pos.y+5);
+            return; 
+        }  
 
         switch (creep.memory.init) {
             case 0:

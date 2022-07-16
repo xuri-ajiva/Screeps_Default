@@ -7,7 +7,7 @@ const REPAIR = 'repair';
 const LOOTER = 'lootcolector';
 const SPAWNHELPER = 'spawnhelper';
 const ATTACKE = 'attack';
-const CARRYERS = 4; //(+1)
+const CARRYERS = 2; //(+1)
 const MINERS = 7;
 const BUILDERS = 4;
 const UPGRADERS = 4;
@@ -37,7 +37,7 @@ module.exports = {
             return s.memory.pet;
         });
 
-        if (!spw.spawning) {
+        if (!spw.spawning && spw.memory.creeps_count_by_action) {
             let energy = spw.room.energyAvailable;
             //console.log(energy);
             //if (energy < 250) return;
@@ -88,10 +88,15 @@ module.exports = {
                 spw.SpawnCustomCreep(energy, LOOTER);
                 spw.memory.creeps_count_by_action[LOOTER] += 1;
             }*/
-        } else {
+        } else if(spw.memory.creeps_count_by_action) {
             spw.room.visual.text('🛠️' + Game.creeps[spw.spawning.name].memory.action,
                 spw.pos.x + 1, spw.pos.y,
                 {align: 'left', opacity: 0.7});
+        }else{
+            console.log("SpawnInit Error");
+            console.log('🈴: ' + Game.time);
+            spawn.memory.init = spw.room.controller.level;
+            require('Init').Init(spw);
         }
     }
 };

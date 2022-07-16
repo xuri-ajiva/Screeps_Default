@@ -72,6 +72,35 @@ module.exports = {
 
                 break;
             case  1:
+                let towers = creep.room.find(FIND_STRUCTURES, {filter: (s) =>(s.structureType === STRUCTURE_TOWER || s.structureType === STRUCTURE_SPAWN) && (s.store) && s.store[RESOURCE_ENERGY] && s.store[RESOURCE_ENERGY] > 0 && !s.my});
+        
+                if(towers.length){
+                    if(creep.attack(towers[0]) == ERR_NOT_IN_RANGE){
+                        creep.moveTo(towers[0]);
+                        creep.say("sp");
+                    }else if(creep.attack(towers[0]) == ERR_NO_BODYPART && creep.body[CARRY] == 0){
+                        creep.say("Err");
+                        require('special.renew').recycle(creep, Game.getObjectById(creep.memory.spawn));
+                    }
+                    creep.say("sp-");
+                    return;
+                }else{
+                    creep.say("sp1");
+                    let creF = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS);   
+                    
+                    if(creF){
+                        creep.say("sp2");
+                        if(creep.attack(creF) === ERR_NOT_IN_RANGE){
+                            creep.moveTo(creF)
+                        }else {
+                            require('special.renew').recycle(creep, Game.getObjectById(creep.memory.spawn));
+                        }
+                        return;
+                    }
+                
+                
+                }
+                
                 switch (creep.memory.init) {
                     case 0:
                         creep.memory.init = 1;

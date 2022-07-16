@@ -6,7 +6,7 @@ module.exports = {
 
         for (let x in _target) {
             let _a = Game.getObjectById('e3ae6c371216c79');
-            if (_a.id !== _target[x].id)
+            if (_a && _a.id !== _target[x].id)
                 this.send(_a, _target[x]);
         }
 

@@ -49,17 +49,17 @@ module.exports = function () {
             case BUILDER:
                 return global(300, 600, energy, [WORK, CARRY, WORK, MOVE]); //done
             case UPGRADE:
-                return global(200, 800, energy, [WORK, MOVE, CARRY], energy > 600 ? [MOVE,CARRY] : undefined); //done
+                return global(200, 800, energy, [WORK, MOVE, CARRY], energy > 600 ? [MOVE, CARRY] : undefined); //done
             case CARRYER:
-                return global(100, 600, energy, [MOVE, CARRY],undefined); //done
+                return global(100, 600, energy, [MOVE, CARRY], undefined); //done
             case REPAIR:
                 return global(200, 500, energy, [WORK, MOVE, CARRY], energy > 300 ? [WORK] : undefined); //done
             case LOOTER:
                 return global(200, 300, energy, [MOVE, CARRY], energy > 300 ? [MOVE] : undefined); //done
             case SPAWNHELPER:
-                return global(200, 800, energy, [MOVE, CARRY], [WORK]); //done
+                return global(200, 800, energy, [MOVE, CARRY]/*, [WORK]*/); //done
             case ATTACKE:
-                return global(200, 500, energy, [ MOVE, TOUGH, TOUGH,ATTACK]); //done
+                return global(200, 800, energy, [TOUGH, TOUGH, MOVE, ATTACK]); //done
             default:
                 console.log('⚠: Unknown Action Pleas Configure: action.' + action);
                 break;
